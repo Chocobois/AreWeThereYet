@@ -51,7 +51,7 @@ export class Timer extends Button {
 	): void {
 		super.onDown(pointer, localX, localY, event);
 
-		this.time += 30;
+		this.time += 15;
 		this.time = Math.ceil(this.time);
 
 		this.scene.tweens.add({
