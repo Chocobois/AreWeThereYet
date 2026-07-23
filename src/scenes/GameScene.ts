@@ -39,10 +39,10 @@ export class GameScene extends BaseScene {
 		this.fitToScreen(this.background);
 
 		this.timers = [];
-		this.timers.push(new GreenEgg(this, 600, 1000));
-		this.timers.push(new Golen(this, 1000, 900));
-		this.timers.push(new BlueCone(this, 1400, 1000));
-		this.timers.push(new Hourglass(this, 1000, 900));
+		this.timers.push(new GreenEgg(this, 600, 800));
+		this.timers.push(new Golen(this, 1000, 700));
+		this.timers.push(new BlueCone(this, 1400, 800));
+		this.timers.push(new Hourglass(this, 800, 500));
 
 		this.orders = [];
 		this.newOrder();

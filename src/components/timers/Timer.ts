@@ -23,8 +23,9 @@ export class Timer extends Button {
 
 	protected remainingSeconds: number = 0;
 
-	protected container: Phaser.GameObjects.Container;
-	protected shadow: Phaser.GameObjects.Image;
+	protected scaleCont: Phaser.GameObjects.Container; // For scaling image + shadow
+	protected shadow: Phaser.GameObjects.Image; // Set by children
+	protected squishCont: Phaser.GameObjects.Container; // For squishing image
 	protected image: Phaser.GameObjects.Image;
 	protected text: Phaser.GameObjects.Text;
 
@@ -33,33 +34,39 @@ export class Timer extends Button {
 		scene.add.existing(this);
 		this.scene = scene;
 
-		this.container = scene.add.container();
-		this.add(this.container);
+		this.scaleCont = scene.add.container();
+		this.add(this.scaleCont);
 
-		this.shadow = scene.add.image(0, -100, "shadow");
+		this.shadow = scene.add.image(0, 0, "shadow");
 		this.shadow.setAlpha(0.3);
 		this.shadow.setScale(250 / this.shadow.width);
-		this.container.add(this.shadow);
+		this.scaleCont.add(this.shadow);
 
-		this.image = scene.add.image(0, 0, spriteKey);
-		this.image.setOrigin(0.5, 1.0);
+		this.squishCont = scene.add.container(0, 0);
+		this.scaleCont.add(this.squishCont);
+
+		this.image = scene.add.image(0, -120, spriteKey);
 		this.image.setScale(400 / this.image.width);
-		this.container.add(this.image);
+		this.squishCont.add(this.image);
 
 		this.bindInteractive(this.image, true);
 		this.on("click", this.onClick, this);
 
-		this.text = scene.addText({ x: 0, y: -40, size: 48, text: "00:00" });
+		this.text = scene.addText({ x: 0, y: 60, size: 48, text: "00:00" });
 		this.text.setOrigin(0.5);
 		this.text.setStroke("black", 16);
 		this.add(this.text);
 	}
 
 	update(time: number, delta: number) {
-		const scale = (1.1 * this.y) / this.scene.H; // Larger near bottom of screen
+		// Scale larger near bottom of screen
+		const scale = (1.1 * this.y) / this.scene.H;
+		this.scaleCont.setScale(scale, scale);
+
+		// Squish image
 		const squish = 0.1 * this.holdSmooth;
-		this.container.setScale(scale * (1 + squish), scale * (1 - squish));
-		this.image.y = -100 * this.dragSmooth;
+		this.squishCont.setScale(1 + squish, 1 - squish);
+		this.squishCont.y = -100 * this.dragSmooth;
 
 		const prevSeconds = this.remainingSeconds;
 		this.remainingSeconds = Math.max(0, this.remainingSeconds - delta / 1000);
@@ -81,9 +88,12 @@ export class Timer extends Button {
 	onDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
 		super.onDrag(pointer, dragX, dragY);
 
+		const TOP = 450;
+		const BOTTOM = 900;
+
 		if (this.drag) {
 			this.x = Phaser.Math.Clamp(pointer.x, 400, this.scene.W - 400);
-			this.y = Phaser.Math.Clamp(pointer.y + 100, 500, 1000);
+			this.y = Phaser.Math.Clamp(pointer.y, TOP, BOTTOM);
 		}
 	}
 
