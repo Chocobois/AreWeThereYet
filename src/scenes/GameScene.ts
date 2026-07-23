@@ -7,6 +7,25 @@ import { GreenEgg } from "@/components/timers/GreenEgg";
 import { BlueCone } from "@/components/timers/BlueCone";
 import { Golen } from "@/components/timers/Golen";
 
+const orderItems = [
+	// Temporary: Duplicate entries to increase their odds of appearing
+	{ image: "broccoli", seconds: 5 },
+	{ image: "broccoli", seconds: 10 },
+	{ image: "broccoli", seconds: 10 },
+	{ image: "broccoli", seconds: 10 },
+	{ image: "eggplant", seconds: 15 },
+	{ image: "eggplant", seconds: 20 },
+	{ image: "eggplant", seconds: 20 },
+	{ image: "eggplant", seconds: 20 },
+	{ image: "meat", seconds: 30 },
+	{ image: "meat", seconds: 30 },
+	{ image: "meat", seconds: 30 },
+	{ image: "steak", seconds: 40 },
+	{ image: "steak", seconds: 40 },
+	{ image: "pot", seconds: 50 },
+	{ image: "pot", seconds: 60 },
+];
+
 export class GameScene extends BaseScene {
 	private background: Phaser.GameObjects.Image;
 
@@ -90,18 +109,10 @@ export class GameScene extends BaseScene {
 		const slot = this.slots.find((slot) => !slot.order);
 		if (!slot) return;
 
-		const image = Phaser.Math.RND.pick([
-			"broccoli",
-			"eggplant",
-			"meat",
-			"pot",
-			"steak",
-		]);
-		const seconds = Phaser.Math.RND.pick([
-			5, 10, 10, 10, 15, 20, 20, 20, 30, 30, 30, 40, 40, 50, 60,
-		]);
+		// Select random order item
+		const item = Phaser.Math.RND.pick(orderItems);
 
-		const order = new Order(this, slot.x, slot.y, image, seconds);
+		const order = new Order(this, slot.x, slot.y, item.image, item.seconds);
 		slot.order = order;
 		this.orders.push(order);
 
