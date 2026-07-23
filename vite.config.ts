@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import hmrScenes from "./scripts/hmr-scenes";
 
 import zip from "vite-plugin-zip-pack";
 import checker from "vite-plugin-checker";
@@ -40,6 +41,7 @@ export default defineConfig(({mode}) => {
     base: basePath,
     root: "src",
     plugins: [
+      hmrScenes(),
       pwaMode(mode),
       getGitVersion(),
       checker({
