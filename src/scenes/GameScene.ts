@@ -68,7 +68,7 @@ export class GameScene extends BaseScene {
 		this.orders.push(order);
 
 		// On clicking the bubble (after accepting)
-		order.on("complete", () => {
+		order.on("remove", () => {
 			this.completeOrder(order);
 		});
 

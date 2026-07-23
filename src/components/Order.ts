@@ -9,6 +9,7 @@ export class Order extends Button {
 	public scene: GameScene;
 
 	private accepted: boolean = false;
+	private completed: boolean = false;
 	private requestedSeconds: number;
 	private remainingSeconds: number;
 
@@ -84,13 +85,15 @@ export class Order extends Button {
 	}
 
 	update(time: number, delta: number) {
+		// Silly squishing animation if the request has been accepted
 		let squish = 0.1 * this.holdSmooth;
 		if (this.accepted) {
 			squish += 0.03 * Math.sin(time / 300);
 		}
 		this.squishContainer.setScale(1 + squish, 1 - squish);
 
-		if (this.accepted) {
+		// Count down the request's time if accepted
+		if (this.accepted && !this.completed) {
 			this.remainingSeconds -= delta / 1000;
 		}
 	}
@@ -106,43 +109,12 @@ export class Order extends Button {
 		// Accept order
 		if (!this.accepted) {
 			this.accepted = true;
-			this.text.setText(this.formatTime(this.requestedSeconds));
-			this.pill.setTint(0x229900);
+			this.acceptOrder();
 		}
 		// Complete order
-		else {
-			const distance = Math.round(Math.abs(this.remainingSeconds));
-
-			if (distance == 0) {
-				this.pill.setTint(Color.Cyan500);
-				this.text.setText("Perfect");
-			} else if (distance < 3) {
-				this.pill.setTint(Color.Green600);
-				this.text.setText("Good");
-			} else if (distance < 10) {
-				this.pill.setTint(Color.Amber600);
-				this.text.setText("Bad");
-			} else {
-				this.pill.setTint(Color.Red700);
-				this.text.setText("Terrible");
-			}
-
-			// Debug
-			this.debugText.setVisible(true);
-			this.debugText.setText(`You were ${distance} seconds off!`);
-
-			// Move the bubble offscreen
-			this.scene.addEvent(2000, () => {
-				const offscreenX = this.x < this.scene.CX ? -500 : this.scene.W + 500;
-				this.scene.tweens.add({
-					targets: this,
-					x: offscreenX,
-					ease: Phaser.Math.Easing.Cubic.In,
-					onComplete: () => {
-						this.emit("complete");
-					},
-				});
-			});
+		else if (!this.completed) {
+			this.completed = true;
+			this.completeOrder();
 		}
 	}
 
@@ -156,5 +128,44 @@ export class Order extends Button {
 		} else {
 			return `${minutes}m ${Math.floor(seconds - minutes * 60)}s`;
 		}
+	}
+
+	acceptOrder() {
+		this.text.setText(this.formatTime(this.requestedSeconds));
+		this.pill.setTint(0x229900);
+	}
+
+	completeOrder() {
+		const distance = Math.round(Math.abs(this.remainingSeconds));
+		if (distance == 0) {
+			this.pill.setTint(Color.Cyan500);
+			this.text.setText("Perfect");
+		} else if (distance < 3) {
+			this.pill.setTint(Color.Green600);
+			this.text.setText("Good");
+		} else if (distance < 10) {
+			this.pill.setTint(Color.Amber600);
+			this.text.setText("Bad");
+		} else {
+			this.pill.setTint(Color.Red700);
+			this.text.setText("Terrible");
+		}
+
+		// Debug
+		this.debugText.setVisible(true);
+		this.debugText.setText(`You were ${distance} seconds off!`);
+
+		// Move the bubble offscreen
+		this.scene.addEvent(2000, () => {
+			const offscreenX = this.x < this.scene.CX ? -500 : this.scene.W + 500;
+			this.scene.tweens.add({
+				targets: this,
+				x: offscreenX,
+				ease: Phaser.Math.Easing.Cubic.In,
+				onComplete: () => {
+					this.emit("remove");
+				},
+			});
+		});
 	}
 }
