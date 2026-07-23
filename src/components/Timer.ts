@@ -50,16 +50,15 @@ export class Timer extends Button {
 		event: Phaser.Types.Input.EventData,
 	): void {
 		super.onDown(pointer, localX, localY, event);
-
-		this.time += 15;
+		this.time += pointer.button == 0 ? 15 : -15;
 		this.time = Math.ceil(this.time);
 
 		this.scene.tweens.add({
 			targets: this.text,
-			scaleX: { from: 1.5, to: 1 },
-			scaleY: { from: 1.5, to: 1 },
+			scaleX: { from: 1.25, to: 1 },
+			scaleY: { from: 1.25, to: 1 },
 			ease: Phaser.Math.Easing.Back.Out,
-			duration: 200,
+			duration: 300,
 		});
 	}
 
