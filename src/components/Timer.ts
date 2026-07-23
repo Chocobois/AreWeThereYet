@@ -5,7 +5,7 @@ import { Button } from "./Button";
 export class Timer extends Button {
 	public scene: GameScene;
 
-	private remainingTime: number = 0;
+	private remainingSeconds: number = 0;
 
 	private container: Phaser.GameObjects.Container;
 	private shadow: Phaser.GameObjects.Image;
@@ -40,23 +40,25 @@ export class Timer extends Button {
 	}
 
 	update(time: number, delta: number) {
-		const scale = 1.1 * this.y / this.scene.H; // Larger near bottom of screen
+		const scale = (1.1 * this.y) / this.scene.H; // Larger near bottom of screen
 		const squish = 0.1 * this.holdSmooth;
 		const lift = 0.3 * this.dragSmooth;
 		this.container.setScale(scale * (1 + squish), scale * (1 - squish));
 		this.image.setOrigin(0.5, 1.0 + lift);
-		this.text.setScale(scale);
 
-		const prevTime = this.remainingTime;
-		this.remainingTime = Math.max(0, this.remainingTime - delta / 1000);
+		const prevSeconds = this.remainingSeconds;
+		this.remainingSeconds = Math.max(0, this.remainingSeconds - delta / 1000);
+		const justHitNewSecond =
+			Math.floor(this.remainingSeconds) != Math.floor(prevSeconds);
+
 		this.text.setText(this.formatTime());
 
 		// Time switches to a new second
-		if (Math.floor(this.remainingTime) != Math.floor(prevTime)) {
+		if (justHitNewSecond) {
 			this.bounceTimerText(1.1);
 		}
 		// Timer reaches zero
-		if (this.remainingTime == 0 && prevTime > 0) {
+		if (this.remainingSeconds == 0 && prevSeconds > 0) {
 			this.flashTimer();
 		}
 	}
@@ -71,8 +73,8 @@ export class Timer extends Button {
 	}
 
 	onClick(pointer: Phaser.Input.Pointer) {
-		this.remainingTime += pointer.button != 0 ? -15 : 15;
-		this.remainingTime = Math.ceil(this.remainingTime);
+		this.remainingSeconds += pointer.button != 0 ? -10 : 10;
+		this.remainingSeconds = Math.ceil(this.remainingSeconds);
 
 		this.bounceTimerText();
 	}
@@ -98,11 +100,17 @@ export class Timer extends Button {
 				this.text.setTint(0xffffff);
 			},
 		});
+
+		this.bounceTimerText();
+		this.drag = true;
+		this.scene.addEvent(200, () => {
+			this.drag = false;
+		});
 	}
 
 	formatTime(): string {
-		const minutes = Math.floor(Math.ceil(this.remainingTime) / 60);
-		const seconds = Math.ceil(this.remainingTime) % 60;
+		const minutes = Math.floor(Math.ceil(this.remainingSeconds) / 60);
+		const seconds = Math.ceil(this.remainingSeconds) % 60;
 
 		return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 	}

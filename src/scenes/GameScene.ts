@@ -9,6 +9,9 @@ export class GameScene extends BaseScene {
 	private timers: Timer[];
 	private orders: Order[];
 
+	private totalScore: number;
+	private scoreText: Phaser.GameObjects.Text;
+
 	// Locations to place the order bubbles
 	private slots: { order: Order | null; x: number; y: number }[] = [
 		{ order: null, x: 175, y: 200 },
@@ -39,10 +42,20 @@ export class GameScene extends BaseScene {
 		this.orders = [];
 		this.newOrder();
 
+		this.totalScore = 0;
+		this.scoreText = this.addText({
+			x: this.CX,
+			y: 0,
+			size: 48,
+			text: "Score: 0",
+		});
+		this.scoreText.setStroke("black", 16);
+		this.scoreText.setOrigin(0.5, 0);
+
 		// Endlessly looping gameplay
 		const loop = setInterval(() => {
 			this.newOrder();
-		}, 15000);
+		}, 7500);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
 			clearInterval(loop);
 		});
@@ -51,7 +64,7 @@ export class GameScene extends BaseScene {
 	update(time: number, delta: number) {
 		this.timers.forEach((timer) => {
 			timer.update(time, delta);
-			timer.setDepth(10 + timer.y / 1000)
+			timer.setDepth(10 + timer.y / 1000);
 		});
 		this.orders.forEach((order) => {
 			order.update(time, delta);
@@ -73,7 +86,7 @@ export class GameScene extends BaseScene {
 			"pot",
 			"steak",
 		]);
-		const seconds = Phaser.Math.RND.pick([5, 15, 30, 45, 60, 90]);
+		const seconds = Phaser.Math.RND.pick([5, 10, 20, 30, 40, 60]);
 
 		const order = new Order(this, slot.x, slot.y, image, seconds);
 		slot.order = order;
@@ -82,6 +95,12 @@ export class GameScene extends BaseScene {
 		// On clicking the bubble (after accepting)
 		order.on("remove", () => {
 			this.completeOrder(order);
+		});
+
+		// On completing or failing an order
+		order.on("score", (score: number) => {
+			this.totalScore += score;
+			this.scoreText.setText(`Score: ${this.totalScore}`);
 		});
 	}
 

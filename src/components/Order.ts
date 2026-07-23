@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { GameScene } from "@/scenes/GameScene";
 import { Button } from "./Button";
 import { Color } from "@/util/colors";
+import { interpolateColor } from "@/util/functions";
 
 const SIZE = 350;
 
@@ -93,18 +94,29 @@ export class Order extends Button {
 		this.squishContainer.setScale(1 + squish, 1 - squish);
 
 		// Count down
+		const prevSeconds = this.remainingSeconds;
 		this.remainingSeconds -= delta / 1000;
+		const justHitNewSecond =
+			Math.floor(this.remainingSeconds) != Math.floor(prevSeconds);
 
 		// Too long to accept order
-		if (!this.accepted && !this.completed && this.remainingSeconds < 0) {
-			this.completed = true;
-			this.failOrder("ok nvm");
+		if (!this.accepted && !this.completed) {
+			if (this.remainingSeconds < 0) {
+				this.completed = true;
+				this.failOrder("ok nvm");
+			} else if (this.remainingSeconds <= 5 && justHitNewSecond) {
+				this.flashWarning();
+			}
 		}
 
 		// Too long to complete order (food burned)
-		if (this.accepted && !this.completed && this.remainingSeconds < -30) {
-			this.completed = true;
-			this.failOrder("burned");
+		if (this.accepted && !this.completed) {
+			if (this.remainingSeconds < -30) {
+				this.completed = true;
+				this.failOrder("burned");
+			} else if (this.remainingSeconds <= -25 && justHitNewSecond) {
+				this.flashWarning();
+			}
 		}
 	}
 
@@ -143,7 +155,7 @@ export class Order extends Button {
 	acceptOrder() {
 		this.remainingSeconds = this.requestedSeconds;
 		this.text.setText(this.formatTime(this.requestedSeconds));
-		this.pill.setTint(0x229900);
+		this.pill.setTint(Color.Blue600);
 	}
 
 	completeOrder() {
@@ -151,20 +163,24 @@ export class Order extends Button {
 		if (distance < 2) {
 			this.pill.setTint(Color.Cyan500);
 			this.text.setText("Perfect");
+			this.emit("score", 100);
 		} else if (distance < 5) {
 			this.pill.setTint(Color.Green600);
 			this.text.setText("Good");
+			this.emit("score", 50);
 		} else if (distance < 10) {
 			this.pill.setTint(Color.Amber600);
 			this.text.setText("Bad");
+			this.emit("score", 20);
 		} else {
 			this.pill.setTint(Color.Red700);
 			this.text.setText("Terrible");
+			this.emit("score", -50);
 		}
 
 		// Debug
 		this.debugText.setVisible(true);
-		this.debugText.setText(`You were ${distance} seconds off!`);
+		this.debugText.setText(`${distance} second${distance != 1 ? "s" : ""} off`);
 
 		this.scene.addEvent(2000, this.moveOffscreen, this);
 	}
@@ -174,6 +190,22 @@ export class Order extends Button {
 		this.text.setText(text);
 
 		this.scene.addEvent(2000, this.moveOffscreen, this);
+
+		this.emit("score", -100);
+	}
+
+	flashWarning() {
+		this.scene.tweens.addCounter({
+			ease: Phaser.Math.Easing.Cubic.Out,
+			duration: 1000,
+			onUpdate: (tween) => {
+				const t = tween.getValue()!;
+				this.text.setTint(interpolateColor(0xff0000, 0xffffff, t));
+			},
+			onComplete: () => {
+				this.text.setTint(0xffffff);
+			},
+		});
 	}
 
 	moveOffscreen() {
