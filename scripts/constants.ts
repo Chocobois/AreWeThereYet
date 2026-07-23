@@ -31,10 +31,11 @@ export const build_path = `./dist/${game_dir}/`;
 
 const [owner, repo] = process.env.GITHUB_REPOSITORY?.split('/') ?? [];
 export const repo_org = (owner 
-		?? execSync(`git config --get remote.origin.url | sed -E 's/.*github.com[:\\/]([^\\/]+).*/\\1/'`).toString())
-				.trim();
+		?? tryCatch(() => execSync(`git config --get remote.origin.url`).toString().trim().replace(/.*github\.com[:/]([^/]+)\/.*/, '$1')
+		, "unknown-org")).trim();
 export const repo_name = (repo 
-		?? execSync("basename -s .git $(git config --get remote.origin.url)").toString())
+		?? tryCatch(() => execSync(`git config --get remote.origin.url`).toString().trim().replace(/.*\/([^/]+?)(\.git)?$/, '$1')
+		, "unknown-repo"))
 				.trim();
 export const game_icon = `https://${repo_org}.github.io/${repo_name}/icon.png`;
 export const game_image = `https://${repo_org}.github.io/${repo_name}/og_image.png`;
