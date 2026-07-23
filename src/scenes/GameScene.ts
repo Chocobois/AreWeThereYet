@@ -53,11 +53,17 @@ export class GameScene extends BaseScene {
 		this.scoreText.setOrigin(0.5, 0);
 
 		// Endlessly looping gameplay
-		const loop = setInterval(() => {
-			this.newOrder();
-		}, 7500);
-		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-			clearInterval(loop);
+		this.time.addEvent({
+			delay: 7500,
+			loop: true,
+			callback: () => {
+				// Allow a maximum of 2 pending orders
+				const pendingOrders = this.orders.filter((order) => !order.accepted);
+				if (pendingOrders.length <= 1) {
+					this.newOrder();
+				}
+			},
+			callbackScope: this,
 		});
 	}
 

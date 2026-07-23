@@ -9,8 +9,8 @@ const SIZE = 350;
 export class Order extends Button {
 	public scene: GameScene;
 
-	private accepted: boolean = false;
-	private completed: boolean = false;
+	public accepted: boolean = false;
+	public completed: boolean = false;
 	private requestedSeconds: number;
 	private remainingSeconds: number;
 

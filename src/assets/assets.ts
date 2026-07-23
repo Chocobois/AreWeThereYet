@@ -6,15 +6,6 @@ const images: Image[] = [
 	// Backgrounds
 	image("backgrounds/background.png", "background"),
 
-	// Characters
-	image("characters/player.png", "player"),
-
-	// Items
-	image("items/coin.png", "coin"),
-
-	// UI
-	image("ui/hud.png", "hud"),
-
 	// Titlescreen
 	image("titlescreen/sky.png", "title_sky"),
 	image("titlescreen/background.png", "title_background"),
@@ -29,11 +20,11 @@ const images: Image[] = [
 	image("timer_2.png", "timer_2"),
 	image("timer_3.png", "timer_3"),
 
-	image("broccoli.png", "broccoli"),
-	image("eggplant.png", "eggplant"),
-	image("meat.png", "meat"),
-	image("pot.png", "pot"),
-	image("steak.png", "steak"),
+	image("food/broccoli.png", "broccoli"),
+	image("food/eggplant.png", "eggplant"),
+	image("food/meat.png", "meat"),
+	image("food/pot.png", "pot"),
+	image("food/steak.png", "steak"),
 
 	image("bubble.png", "bubble"),
 	image("pill.png", "pill"),
