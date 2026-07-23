@@ -32,7 +32,7 @@ export class Order extends Button {
 		scene.add.existing(this);
 		this.scene = scene;
 		this.requestedSeconds = seconds;
-		this.remainingSeconds = seconds;
+		this.remainingSeconds = 30;
 
 		/* Sprites */
 
@@ -92,9 +92,19 @@ export class Order extends Button {
 		}
 		this.squishContainer.setScale(1 + squish, 1 - squish);
 
-		// Count down the request's time if accepted
-		if (this.accepted && !this.completed) {
-			this.remainingSeconds -= delta / 1000;
+		// Count down
+		this.remainingSeconds -= delta / 1000;
+
+		// Too long to accept order
+		if (!this.accepted && !this.completed && this.remainingSeconds < 0) {
+			this.completed = true;
+			this.failOrder("ok nvm");
+		}
+
+		// Too long to complete order (food burned)
+		if (this.accepted && !this.completed && this.remainingSeconds < -30) {
+			this.completed = true;
+			this.failOrder("burned");
 		}
 	}
 
@@ -107,7 +117,7 @@ export class Order extends Button {
 		super.onDown(pointer, localX, localY, event);
 
 		// Accept order
-		if (!this.accepted) {
+		if (!this.accepted && !this.completed) {
 			this.accepted = true;
 			this.acceptOrder();
 		}
@@ -131,16 +141,17 @@ export class Order extends Button {
 	}
 
 	acceptOrder() {
+		this.remainingSeconds = this.requestedSeconds;
 		this.text.setText(this.formatTime(this.requestedSeconds));
 		this.pill.setTint(0x229900);
 	}
 
 	completeOrder() {
 		const distance = Math.round(Math.abs(this.remainingSeconds));
-		if (distance == 0) {
+		if (distance < 2) {
 			this.pill.setTint(Color.Cyan500);
 			this.text.setText("Perfect");
-		} else if (distance < 3) {
+		} else if (distance < 5) {
 			this.pill.setTint(Color.Green600);
 			this.text.setText("Good");
 		} else if (distance < 10) {
@@ -155,17 +166,26 @@ export class Order extends Button {
 		this.debugText.setVisible(true);
 		this.debugText.setText(`You were ${distance} seconds off!`);
 
-		// Move the bubble offscreen
-		this.scene.addEvent(2000, () => {
-			const offscreenX = this.x < this.scene.CX ? -500 : this.scene.W + 500;
-			this.scene.tweens.add({
-				targets: this,
-				x: offscreenX,
-				ease: Phaser.Math.Easing.Cubic.In,
-				onComplete: () => {
-					this.emit("remove");
-				},
-			});
+		this.scene.addEvent(2000, this.moveOffscreen, this);
+	}
+
+	failOrder(text: string) {
+		this.pill.setTint(Color.Red600);
+		this.text.setText(text);
+
+		this.scene.addEvent(2000, this.moveOffscreen, this);
+	}
+
+	moveOffscreen() {
+		const offscreenX = this.x < this.scene.CX ? -500 : this.scene.W + 500;
+
+		this.scene.tweens.add({
+			targets: this,
+			x: offscreenX,
+			ease: Phaser.Math.Easing.Cubic.In,
+			onComplete: () => {
+				this.emit("remove");
+			},
 		});
 	}
 }

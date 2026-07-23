@@ -40,14 +40,23 @@ export class GameScene extends BaseScene {
 		this.newOrder();
 
 		// Endlessly looping gameplay
-		setInterval(() => {
+		const loop = setInterval(() => {
 			this.newOrder();
 		}, 15000);
+		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+			clearInterval(loop);
+		});
 	}
 
 	update(time: number, delta: number) {
-		this.timers.forEach((timer) => timer.update(time, delta));
-		this.orders.forEach((order) => order.update(time, delta));
+		this.timers.forEach((timer) => {
+			timer.update(time, delta);
+			timer.setDepth(10 + timer.y / 1000)
+		});
+		this.orders.forEach((order) => {
+			order.update(time, delta);
+			order.setDepth(20);
+		});
 	}
 
 	/* Orders */
@@ -64,7 +73,7 @@ export class GameScene extends BaseScene {
 			"pot",
 			"steak",
 		]);
-		const seconds = Phaser.Math.RND.pick([15, 30, 45, 60, 90, 120]);
+		const seconds = Phaser.Math.RND.pick([5, 15, 30, 45, 60, 90]);
 
 		const order = new Order(this, slot.x, slot.y, image, seconds);
 		slot.order = order;

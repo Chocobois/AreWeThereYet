@@ -4,40 +4,40 @@ import { image, sound, music, loadFont, spritesheet } from "./util";
 /* Images */
 const images: Image[] = [
 	// Backgrounds
-	image("backgrounds/background", "background"),
+	image("backgrounds/background.png", "background"),
 
 	// Characters
-	image("characters/player", "player"),
+	image("characters/player.png", "player"),
 
 	// Items
-	image("items/coin", "coin"),
+	image("items/coin.png", "coin"),
 
 	// UI
-	image("ui/hud", "hud"),
+	image("ui/hud.png", "hud"),
 
 	// Titlescreen
-	image("titlescreen/sky", "title_sky"),
-	image("titlescreen/background", "title_background"),
-	image("titlescreen/foreground", "title_foreground"),
-	image("titlescreen/character", "title_character"),
+	image("titlescreen/sky.png", "title_sky"),
+	image("titlescreen/background.png", "title_background"),
+	image("titlescreen/foreground.png", "title_foreground"),
+	image("titlescreen/character.png", "title_character"),
 
 	// Car
-	image("front", "front"),
+	image("front.png", "front"),
 
 	// Cooking
-	image("timer_1", "timer_1"),
-	image("timer_2", "timer_2"),
-	image("timer_3", "timer_3"),
+	image("timer_1.png", "timer_1"),
+	image("timer_2.png", "timer_2"),
+	image("timer_3.png", "timer_3"),
 
-	image("broccoli", "broccoli"),
-	image("eggplant", "eggplant"),
-	image("meat", "meat"),
-	image("pot", "pot"),
-	image("steak", "steak"),
+	image("broccoli.png", "broccoli"),
+	image("eggplant.png", "eggplant"),
+	image("meat.png", "meat"),
+	image("pot.png", "pot"),
+	image("steak.png", "steak"),
 
-	image("bubble", "bubble"),
-	image("pill", "pill"),
-	image("shadow", "shadow"),
+	image("bubble.png", "bubble"),
+	image("pill.png", "pill"),
+	image("shadow.png", "shadow"),
 ];
 
 /* Spritesheets */
@@ -45,12 +45,12 @@ const spritesheets: SpriteSheet[] = [];
 
 /* Audios */
 const audios: Audio[] = [
-	music("title", "m_main_menu"),
-	music("first", "m_first"),
-	sound("tree/rustle", "t_rustle", 0.5),
+	music("title.mp3", "m_main_menu"),
+	music("first.mp3", "m_first"),
+	sound("tree/rustle.mp3", "t_rustle", 0.5),
 ];
 
 /* Fonts */
-await loadFont("DynaPuff-Medium", "Game Font");
+await loadFont("DynaPuff-Medium.ttf", "Game Font");
 
 export { images, spritesheets, audios };
