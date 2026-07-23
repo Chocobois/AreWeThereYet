@@ -86,7 +86,9 @@ export class GameScene extends BaseScene {
 			"pot",
 			"steak",
 		]);
-		const seconds = Phaser.Math.RND.pick([5, 10, 20, 30, 40, 60]);
+		const seconds = Phaser.Math.RND.pick([
+			5, 10, 10, 10, 15, 20, 20, 20, 30, 30, 30, 40, 40, 50, 60,
+		]);
 
 		const order = new Order(this, slot.x, slot.y, image, seconds);
 		slot.order = order;
