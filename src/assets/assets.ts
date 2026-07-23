@@ -15,11 +15,17 @@ const images: Image[] = [
 	// Car
 	image("front.png", "front"),
 
-	// Cooking
-	image("timer_1.png", "timer_1"),
-	image("timer_2.png", "timer_2"),
-	image("timer_3.png", "timer_3"),
+	// Timers
+	image("timers/green_egg.png", "timer_green_egg"),
+	image("timers/blue_cone.png", "timer_blue_cone"),
+	image("timers/golen.png", "timer_golen"),
+	image("timers/hourglass_1.png", "timer_hourglass_1"),
+	image("timers/hourglass_2.png", "timer_hourglass_2"),
+	image("timers/hourglass_3.png", "timer_hourglass_3"),
+	image("timers/hourglass_4.png", "timer_hourglass_4"),
+	image("timers/hourglass_5.png", "timer_hourglass_5"),
 
+	// Food
 	image("food/broccoli.png", "broccoli"),
 	image("food/eggplant.png", "eggplant"),
 	image("food/meat.png", "meat"),

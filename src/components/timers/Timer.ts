@@ -1,18 +1,34 @@
 import Phaser from "phaser";
-import { GameScene } from "@/scenes/GameScene";
-import { Button } from "./Button";
+import { BaseScene } from "@/scenes/BaseScene";
+import { Button } from "../Button";
+
+export const TimerType = {
+	GreenEgg: {
+		image: "timer_green_egg",
+	},
+	BlueCone: {
+		image: "timer_blue_cone",
+	},
+	Golen: {
+		image: "timer_golen",
+	},
+	Hourglass: {
+		image: "timer_hourglass_1",
+	},
+} as const;
+export type TimerType = keyof typeof TimerType;
 
 export class Timer extends Button {
-	public scene: GameScene;
+	public scene: BaseScene;
 
-	private remainingSeconds: number = 0;
+	protected remainingSeconds: number = 0;
 
-	private container: Phaser.GameObjects.Container;
-	private shadow: Phaser.GameObjects.Image;
-	private image: Phaser.GameObjects.Image;
-	private text: Phaser.GameObjects.Text;
+	protected container: Phaser.GameObjects.Container;
+	protected shadow: Phaser.GameObjects.Image;
+	protected image: Phaser.GameObjects.Image;
+	protected text: Phaser.GameObjects.Text;
 
-	constructor(scene: GameScene, x: number, y: number, spriteKey: string) {
+	constructor(scene: BaseScene, x: number, y: number, spriteKey: string) {
 		super(scene, x, y);
 		scene.add.existing(this);
 		this.scene = scene;
@@ -42,9 +58,8 @@ export class Timer extends Button {
 	update(time: number, delta: number) {
 		const scale = (1.1 * this.y) / this.scene.H; // Larger near bottom of screen
 		const squish = 0.1 * this.holdSmooth;
-		const lift = 0.3 * this.dragSmooth;
 		this.container.setScale(scale * (1 + squish), scale * (1 - squish));
-		this.image.setOrigin(0.5, 1.0 + lift);
+		this.image.y = -100 * this.dragSmooth;
 
 		const prevSeconds = this.remainingSeconds;
 		this.remainingSeconds = Math.max(0, this.remainingSeconds - delta / 1000);
@@ -79,6 +94,13 @@ export class Timer extends Button {
 		this.bounceTimerText();
 	}
 
+	bounceTimer() {
+		this.drag = true;
+		this.scene.addEvent(200, () => {
+			this.drag = false;
+		});
+	}
+
 	bounceTimerText(strength: number = 1.25) {
 		this.scene.tweens.add({
 			targets: this.text,
@@ -101,11 +123,8 @@ export class Timer extends Button {
 			},
 		});
 
+		this.bounceTimer();
 		this.bounceTimerText();
-		this.drag = true;
-		this.scene.addEvent(200, () => {
-			this.drag = false;
-		});
 	}
 
 	formatTime(): string {

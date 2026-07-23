@@ -1,7 +1,11 @@
 import Phaser from "phaser";
 import { Order } from "@/components/Order";
-import { Timer } from "@/components/Timer";
+import { Timer, TimerType } from "@/components/timers/Timer";
 import { BaseScene } from "@/scenes/BaseScene";
+import { Hourglass } from "@/components/timers/Hourglass";
+import { GreenEgg } from "@/components/timers/GreenEgg";
+import { BlueCone } from "@/components/timers/BlueCone";
+import { Golen } from "@/components/timers/Golen";
 
 export class GameScene extends BaseScene {
 	private background: Phaser.GameObjects.Image;
@@ -35,9 +39,10 @@ export class GameScene extends BaseScene {
 		this.fitToScreen(this.background);
 
 		this.timers = [];
-		this.timers.push(new Timer(this, 600, 1000, "timer_1"));
-		this.timers.push(new Timer(this, 1000, 900, "timer_2"));
-		this.timers.push(new Timer(this, 1400, 1000, "timer_3"));
+		this.timers.push(new GreenEgg(this, 600, 1000));
+		this.timers.push(new Golen(this, 1000, 900));
+		this.timers.push(new BlueCone(this, 1400, 1000));
+		this.timers.push(new Hourglass(this, 1000, 900));
 
 		this.orders = [];
 		this.newOrder();
