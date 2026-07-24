@@ -39,6 +39,9 @@ export class GameScene extends BaseScene {
 
 	private stageTimer: number;
 
+	public flySpawnChance: number;
+	public maxFlies: number;
+
 	// Locations to place the order bubbles
 	private slots: { order: Order | null; x: number; y: number }[] = [
 		{ order: null, x: 175, y: 200 },
@@ -85,6 +88,9 @@ export class GameScene extends BaseScene {
 		this.scoreText.setStroke("black", 16);
 		this.scoreText.setOrigin(0.5, 0);
 
+		this.flySpawnChance = 0.5;
+		this.maxFlies = 3;
+
 		// Endlessly looping gameplay
 		this.time.addEvent({
 			delay: 7500,
@@ -101,12 +107,12 @@ export class GameScene extends BaseScene {
 
 		
 		this.time.addEvent({
-			delay: 4000,
+			delay: 5000,
 			loop: true,
 			startAt: -30000,
 			callback: () => {
 				// Allow a maximum of 2 pending orders
-				if ((this.flies.length <= 4) && (Math.random() < 0.5)) {
+				if ((this.flies.length < this.maxFlies) && (Math.random() < this.flySpawnChance)) {
 					this.spawnFly();
 				}
 			},
@@ -193,6 +199,10 @@ export class GameScene extends BaseScene {
 
 	addScore(n: number){
 		this.totalScore += n;
+	}
+
+	killFlies(){
+		this.flies.forEach((f) => f.forceDie());
 	}
 
 	completeOrder(order: Order) {

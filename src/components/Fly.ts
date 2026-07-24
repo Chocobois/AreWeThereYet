@@ -157,6 +157,15 @@ export class Fly extends Button{
 
 	}
 
+    forceDie(){
+        this.fstate = 3;
+        this.spr.setTexture("flydead");
+        this.effect.setVisible(true);
+        this.spr.removeInteractive();
+        this.scene.sound.play("flyslap", {volume: 0.35});
+        this.ptimer = [1000,1000];
+    }
+
     distance(i: number[], e: number[]): number{
         return Math.sqrt(Math.pow((i[0]-e[0]),2)+Math.pow((i[1]-e[1]),2));
     }
