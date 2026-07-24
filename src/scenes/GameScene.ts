@@ -6,6 +6,7 @@ import { Hourglass } from "@/components/timers/Hourglass";
 import { GreenEgg } from "@/components/timers/GreenEgg";
 import { BlueCone } from "@/components/timers/BlueCone";
 import { Golen } from "@/components/timers/Golen";
+import { Fly } from "@/components/Fly";
 
 const orderItems = [
 	// Temporary: Duplicate entries to increase their odds of appearing
@@ -31,9 +32,12 @@ export class GameScene extends BaseScene {
 
 	private timers: Timer[];
 	private orders: Order[];
+	private flies: Fly[];
 
 	private totalScore: number;
 	private scoreText: Phaser.GameObjects.Text;
+
+	private stageTimer: number;
 
 	// Locations to place the order bubbles
 	private slots: { order: Order | null; x: number; y: number }[] = [
@@ -57,6 +61,8 @@ export class GameScene extends BaseScene {
 		this.background.setOrigin(0);
 		this.fitToScreen(this.background);
 
+		this.stageTimer = 300000;
+
 		this.timers = [];
 		this.timers.push(new GreenEgg(this, 600, 800));
 		this.timers.push(new Golen(this, 1000, 700));
@@ -65,6 +71,9 @@ export class GameScene extends BaseScene {
 
 		this.orders = [];
 		this.newOrder();
+
+		this.flies = [];
+		//this.spawnFly();
 
 		this.totalScore = 0;
 		this.scoreText = this.addText({
@@ -89,6 +98,20 @@ export class GameScene extends BaseScene {
 			},
 			callbackScope: this,
 		});
+
+		
+		this.time.addEvent({
+			delay: 2000,
+			loop: true,
+			callback: () => {
+				// Allow a maximum of 2 pending orders
+				if ((this.flies.length <= 4) && (Math.random() < 0.25)) {
+					this.spawnFly();
+				}
+			},
+			callbackScope: this,
+		});
+		
 	}
 
 	update(time: number, delta: number) {
@@ -96,10 +119,49 @@ export class GameScene extends BaseScene {
 			timer.update(time, delta);
 			timer.setDepth(10 + timer.y / 1000);
 		});
+
+		/*
 		this.orders.forEach((order) => {
 			order.update(time, delta);
 			order.setDepth(20);
 		});
+		*/
+
+
+
+		for(let o = (this.orders.length-1); o >= 0; o--){
+			this.orders[o].update(time, delta);
+			this.orders[o].setDepth(20);
+			if(this.orders[o].deleteFlag) {
+				//this.orders[o].destroy();
+				//this.orders.splice(o,1);
+			}
+		}
+
+		for(let fl = (this.flies.length-1); fl >= 0; fl--){
+			this.flies[fl].update(time, delta);
+			this.flies[fl].setDepth(40);
+			if(this.flies[fl].deleteFlag) {
+				this.flies[fl].destroy();
+				this.flies.splice(fl,1);
+			}
+		}
+
+		this.scoreText.setText(`Score: ${this.totalScore}`);
+
+		this.stageTimer -= delta;
+		if((this.stageTimer <= 0) && this.orders.length < 1){ //Go to next stage if the stage timer has run out and all your orders have finished
+			this.advance();
+		}
+	}
+
+	spawnFly(){
+		let ry = 360+Math.round(Math.random()*(1080-400));
+		let rx = 64+Math.round(Math.random()*(1920-128));
+		let sx = -120+Math.round(Math.random()*2160);
+		//let sx = 100+Math.round(Math.random()*1720);
+		this.flies.push(new Fly(this,sx,-100,rx,ry));
+
 	}
 
 	/* Orders */
@@ -128,6 +190,10 @@ export class GameScene extends BaseScene {
 		});
 	}
 
+	addScore(n: number){
+		this.totalScore += n;
+	}
+
 	completeOrder(order: Order) {
 		const slot = this.slots.find((s) => s.order === order);
 		if (slot) {
@@ -137,5 +203,9 @@ export class GameScene extends BaseScene {
 		this.orders = this.orders.filter((o) => o !== order);
 
 		order.destroy();
+	}
+
+	advance(){
+
 	}
 }

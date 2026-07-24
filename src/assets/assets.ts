@@ -5,13 +5,26 @@ import { image, sound, music, loadFont, spritesheet } from "./util";
 const images: Image[] = [
 	// Backgrounds
 	image("backgrounds/background.png", "background"),
-
+	image("backgrounds/transitionbkg.png", "transitionbkg"),
+	image("backgrounds/shopkeep.png", "shopkeep"),
+	image("backgrounds/shopkeep_smirk.png", "shopkeep_smirk"),
+	image("backgrounds/timerbox.png", "timerbox"),
 	// Titlescreen
 	image("titlescreen/sky.png", "title_sky"),
 	image("titlescreen/background.png", "title_background"),
 	image("titlescreen/foreground.png", "title_foreground"),
 	image("titlescreen/character.png", "title_character"),
 
+
+	//Fly
+	image("characters/flyf1.png", "flyf1"),
+	image("characters/flyf2.png", "flyf2"),
+	image("characters/flystand.png", "flystand"),
+	image("characters/flyt0.png", "flyt0"),
+	image("characters/flyt1.png", "flyt1"),
+	image("characters/flydead.png", "flydead"),
+
+	image("characters/smack.png", "smack"),
 	// Car
 	image("front.png", "front"),
 
@@ -45,6 +58,7 @@ const audios: Audio[] = [
 	music("title.mp3", "m_main_menu"),
 	music("first.mp3", "m_first"),
 	sound("tree/rustle.mp3", "t_rustle", 0.5),
+	sound("flyslap.mp3", "flyslap", 0.5),
 ];
 
 /* Fonts */

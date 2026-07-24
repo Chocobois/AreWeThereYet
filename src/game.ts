@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { PreloadScene } from "@/scenes/PreloadScene";
 import { TitleScene } from "@/scenes/TitleScene";
+import { TimerSelectScene } from "./scenes/TimerSelectScreen";
 import { GameScene } from "@/scenes/GameScene";
 
 export async function Game() {
@@ -13,7 +14,7 @@ export async function Game() {
     scale: {
       mode: Phaser.Scale.FIT,
     },
-    scene: [PreloadScene, TitleScene, GameScene],
+    scene: [PreloadScene, TitleScene, GameScene, TimerSelectScene],
 
     plugins: {
       global: [],

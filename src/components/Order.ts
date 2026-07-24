@@ -22,6 +22,8 @@ export class Order extends Button {
 	private text: Phaser.GameObjects.Text;
 	private debugText: Phaser.GameObjects.Text;
 
+	public deleteFlag: boolean = false;
+
 	constructor(
 		scene: GameScene,
 		x: number,
@@ -192,6 +194,7 @@ export class Order extends Button {
 		this.scene.addEvent(2000, this.moveOffscreen, this);
 
 		this.emit("score", -100);
+		this.deleteFlag = true;
 	}
 
 	flashWarning() {
