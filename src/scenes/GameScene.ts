@@ -101,11 +101,12 @@ export class GameScene extends BaseScene {
 
 		
 		this.time.addEvent({
-			delay: 2000,
+			delay: 4000,
 			loop: true,
+			startAt: -30000,
 			callback: () => {
 				// Allow a maximum of 2 pending orders
-				if ((this.flies.length <= 4) && (Math.random() < 0.25)) {
+				if ((this.flies.length <= 4) && (Math.random() < 0.5)) {
 					this.spawnFly();
 				}
 			},
