@@ -152,7 +152,7 @@ export class Fly extends Button{
             this.spr.setTexture("flydead");
             this.effect.setVisible(true);
             this.spr.removeInteractive();
-            this.scene.sound.play("flyslap", {volume: 0.25});
+            this.scene.sound.play("flyslap", {volume: 0.1});
             this.ptimer = [1000,1000];
             
            //this.scene.killFlies();

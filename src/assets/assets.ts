@@ -7,7 +7,9 @@ const images: Image[] = [
 	image("backgrounds/background.png", "background"),
 	image("backgrounds/transitionbkg.png", "transitionbkg"),
 	image("backgrounds/shopkeep.png", "shopkeep"),
+	image("backgrounds/shopkeep_talk.png", "shopkeep_talk"),
 	image("backgrounds/shopkeep_smirk.png", "shopkeep_smirk"),
+	image("backgrounds/shopkeep_speech.png", "shopkeep_speech"),
 	image("backgrounds/timerbox.png", "timerbox"),
 	// Titlescreen
 	image("titlescreen/sky.png", "title_sky"),
@@ -67,6 +69,7 @@ const audios: Audio[] = [
 	sound("tooltip.mp3", "tooltip", 0.5),
 	sound("eggtick.mp3", "eggtick", 0.5),
 	sound("neworder.mp3", "neworder", 0.5),
+	sound("scroll.mp3", "scroll", 0.5),
 ];
 
 /* Fonts */
