@@ -94,7 +94,7 @@ export class Timer extends Button {
 
 	onClick(pointer: Phaser.Input.Pointer) {
 		this.remainingSeconds += pointer.button != 0 ? -10 : 10;
-		this.remainingSeconds = Math.ceil(this.remainingSeconds);
+		this.remainingSeconds = Math.max(0, Math.ceil(this.remainingSeconds));
 
 		this.text.setText(this.formatTime());
 		this.bounceTimerText();
