@@ -288,8 +288,8 @@ export class GameScene extends BaseScene {
 				this.offOrderChance = Math.min(0.95, this.offOrderChance + 0.05);
 				this.maxFlies = Math.min(20, this.maxFlies + 1);
 				this.flySpawnDelay = Math.min(1000, this.flySpawnDelay - 750);
-				this.flySpawnChance = Math.min(1, this.flySpawnChance = 0.05);
-				this.orderExpiryAccel = Math.min(10, this.orderExpiryAccel + 1);
+				this.flySpawnChance = Math.min(1, this.flySpawnChance + 0.05);
+				this.orderExpiryAccel = Math.min(20, this.orderExpiryAccel + 1);
 				this.maxActiveOrders = Math.min(6, Math.trunc(this.maxActiveOrders+0.25));
 				this.maxNewOrders = Math.min(6, Math.trunc(this.maxNewOrders+0.25));
 				if(this.orderDelay == 1000){
