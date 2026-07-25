@@ -22,4 +22,14 @@ export async function Game() {
   };
 
   const game = new Phaser.Game(config);
+
+  game.sound.pauseOnBlur = false;
+  
+  game.events.on('blur', () => {
+    game.sound.setVolume(0.2); 
+  });
+
+  game.events.on('focus', () => {
+    game.sound.setVolume(1.0);
+  });
 }

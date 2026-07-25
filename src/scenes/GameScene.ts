@@ -7,6 +7,7 @@ import { GreenEgg } from "@/components/timers/GreenEgg";
 import { BlueCone } from "@/components/timers/BlueCone";
 import { Golen } from "@/components/timers/Golen";
 import { Fly } from "@/components/Fly";
+import { Music } from "@/components/Music";
 
 const orderItems = [
 	// Temporary: Duplicate entries to increase their odds of appearing
@@ -29,6 +30,8 @@ const orderItems = [
 
 export class GameScene extends BaseScene {
 	private background: Phaser.GameObjects.Image;
+
+	public musicKitchentimer: Phaser.Sound.WebAudioSound;
 
 	private timers: Timer[];
 	private orders: Order[];
@@ -72,6 +75,9 @@ export class GameScene extends BaseScene {
 
 		this.cameras.main.setBackgroundColor(0xffffff);
 
+		this.musicKitchentimer = new Music(this, "m_kitchentimer", { volume: 0.4 });
+		this.musicKitchentimer.play();
+
 		this.background = this.add.image(0, 0, "background");
 		this.background.setOrigin(0);
 		this.fitToScreen(this.background);
@@ -83,6 +89,11 @@ export class GameScene extends BaseScene {
 		//this.timers.push(new Golen(this, 1000, 700));
 		//this.timers.push(new BlueCone(this, 1400, 800));
 		//this.timers.push(new Hourglass(this, 800, 500));
+
+		this.musicKitchentimer.on('bar', () => {
+			this.timers.forEach((timer) => timer.decrementTime());
+			this.orders.forEach((order) => order.decrementTime())
+		});
 
 		this.orders = [];
 		this.newOrder();

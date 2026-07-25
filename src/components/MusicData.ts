@@ -31,6 +31,11 @@ const Data = {
 		start: 41860 / 48000 + overlap,
 		end: 2854884 / 48000 + overlap,
 	},
+	m_kitchentimer: {
+		offset: 0,
+		bpm: 120,
+		loop: true,
+	}
 };
 
 export type MusicKey = keyof typeof Data;

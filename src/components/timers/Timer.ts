@@ -69,22 +69,11 @@ export class Timer extends Button {
 		this.squishCont.y = -100 * this.dragSmooth;
 
 		const prevSeconds = this.remainingSeconds;
-		this.remainingSeconds = Math.max(0, this.remainingSeconds - delta / 1000);
+		// this.remainingSeconds = Math.max(0, this.remainingSeconds - delta / 1000);
 	
 		const justHitNewSecond =
 			Math.floor(this.remainingSeconds) != Math.floor(prevSeconds);
 
-		this.text.setText(this.formatTime());
-		// Time switches to a new second
-		if (justHitNewSecond) {
-			this.bounceTimerText(1.1);
-		}
-
-		this.calculateSound(prevSeconds, this.remainingSeconds);
-		// Timer reaches zero
-		if (this.remainingSeconds == 0 && prevSeconds > 0) {
-			this.flashTimer();
-		}
 	}
 
 	calculateSound(ps: number, rs: number){
@@ -107,6 +96,7 @@ export class Timer extends Button {
 		this.remainingSeconds += pointer.button != 0 ? -10 : 10;
 		this.remainingSeconds = Math.ceil(this.remainingSeconds);
 
+		this.text.setText(this.formatTime());
 		this.bounceTimerText();
 	}
 
@@ -125,6 +115,30 @@ export class Timer extends Button {
 			ease: Phaser.Math.Easing.Back.Out,
 			duration: 300,
 		});
+	}
+
+	decrementTime() {
+		this.text.setText(this.formatTime());
+		// Time switches to a new second
+		this.bounceTimerText(1.1);
+
+		const prevSeconds = this.remainingSeconds;
+		if(this.remainingSeconds > 0) {
+			this.remainingSeconds--;
+			this.scene.tweens.add({
+					targets: this,
+					scaleY: 0.9,
+					scaleX: 1.1,
+					duration: 50,
+					ease: 'Cubic.Out',
+					yoyo: true,
+				});
+		}
+		this.calculateSound(prevSeconds, this.remainingSeconds);
+		// Timer reaches zero
+		if (this.remainingSeconds == 0 && prevSeconds > 0) {
+			this.flashTimer();
+		}
 	}
 
 	flashTimer() {

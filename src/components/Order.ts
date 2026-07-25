@@ -92,32 +92,6 @@ export class Order extends Button {
 			squish += 0.03 * Math.sin(time / 300);
 		}
 		this.squishContainer.setScale(1 + squish, 1 - squish);
-
-		// Count down
-		const prevSeconds = this.remainingSeconds;
-		this.remainingSeconds -= delta / 1000;
-		const justHitNewSecond =
-			Math.floor(this.remainingSeconds) != Math.floor(prevSeconds);
-
-		// Too long to accept order
-		if (!this.accepted && !this.completed) {
-			if (this.remainingSeconds < 0) {
-				this.completed = true;
-				this.failOrder("ok nvm");
-			} else if (this.remainingSeconds <= 5 && justHitNewSecond) {
-				this.flashWarning();
-			}
-		}
-
-		// Too long to complete order (food burned)
-		if (this.accepted && !this.completed) {
-			if (this.remainingSeconds < -30) {
-				this.completed = true;
-				this.failOrder("burned");
-			} else if (this.remainingSeconds <= -25 && justHitNewSecond) {
-				this.flashWarning();
-			}
-		}
 	}
 
 	onDown(
@@ -151,6 +125,29 @@ export class Order extends Button {
 			return `${minutes}m ${Math.floor(seconds - minutes * 60)}s`;
 		}
 	}
+
+	decrementTime() {
+		const prevSeconds = this.remainingSeconds;
+		this.remainingSeconds--;
+
+		if (!this.accepted && !this.completed) {
+			if (this.remainingSeconds < 0) {
+				this.completed = true;
+				this.failOrder("ok nvm");
+			} else if (this.remainingSeconds <= 5) {
+				this.flashWarning();
+			}
+		}
+
+				if (this.accepted && !this.completed) {
+			if (this.remainingSeconds < -30) {
+				this.completed = true;
+				this.failOrder("burned");
+			} else if (this.remainingSeconds <= -25 ) {
+				this.flashWarning();
+			}
+		}
+	};
 
 	acceptOrder() {
 		this.remainingSeconds = this.requestedSeconds;
