@@ -41,6 +41,11 @@ export class GameScene extends BaseScene {
 
 	public flySpawnChance: number;
 	public maxFlies: number;
+	public flySpawnDelay: number;
+	public maxNewOrders: number;
+	public maxActiveOrders: number;
+	public orderDelay: number;
+	public offOrderChance: number;
 
 	// Locations to place the order bubbles
 	private slots: { order: Order | null; x: number; y: number }[] = [
@@ -68,9 +73,9 @@ export class GameScene extends BaseScene {
 
 		this.timers = [];
 		this.timers.push(new GreenEgg(this, 600, 800));
-		this.timers.push(new Golen(this, 1000, 700));
-		this.timers.push(new BlueCone(this, 1400, 800));
-		this.timers.push(new Hourglass(this, 800, 500));
+		//this.timers.push(new Golen(this, 1000, 700));
+		//this.timers.push(new BlueCone(this, 1400, 800));
+		//this.timers.push(new Hourglass(this, 800, 500));
 
 		this.orders = [];
 		this.newOrder();
@@ -88,17 +93,24 @@ export class GameScene extends BaseScene {
 		this.scoreText.setStroke("black", 16);
 		this.scoreText.setOrigin(0.5, 0);
 
+		//set game variables
 		this.flySpawnChance = 0.5;
 		this.maxFlies = 3;
+		this.flySpawnDelay = 10000;
+		this.maxNewOrders = 2;
+		this.maxActiveOrders = 2;
+		this.orderDelay = 7500;
+		this.offOrderChance = 0;
 
 		// Endlessly looping gameplay
 		this.time.addEvent({
-			delay: 7500,
+			delay: this.orderDelay,
 			loop: true,
 			callback: () => {
-				// Allow a maximum of 2 pending orders
+				// Allow a maximum of 2 pending or active orders
 				const pendingOrders = this.orders.filter((order) => !order.accepted);
-				if (pendingOrders.length <= 1) {
+				const activeOrders = this.orders.filter ((order) => !order.completed);
+				if ((pendingOrders.length < this.maxNewOrders) && (activeOrders.length < this.maxActiveOrders)) {
 					this.newOrder();
 				}
 			},
@@ -107,7 +119,7 @@ export class GameScene extends BaseScene {
 
 		
 		this.time.addEvent({
-			delay: 5000,
+			delay: this.flySpawnDelay,
 			loop: true,
 			startAt: -30000,
 			callback: () => {
@@ -202,7 +214,17 @@ export class GameScene extends BaseScene {
 	}
 
 	killFlies(){
-		this.flies.forEach((f) => f.forceDie());
+		this.flies.forEach((f) => 
+		{		
+			if(f.fstate < 3) {
+				f.forceDie();
+			}
+		});
+		this.sound.play("flyslap", {volume: 0.7});
+	}
+
+	increaseDifficulty(){
+
 	}
 
 	completeOrder(order: Order) {

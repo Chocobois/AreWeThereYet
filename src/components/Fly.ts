@@ -8,7 +8,7 @@ export class Fly extends Button{
     private effect: Phaser.GameObjects.Image;
     private phase: number = 0;
     private ptimer: number[] = [100,100];
-    private fstate: number = 0;
+    public fstate: number = 0;
     private bpos: number[] = [0,0];
     private epos: number[] = [0,0];
     private elapsed: number = 0;
@@ -99,7 +99,7 @@ export class Fly extends Button{
                     switch(this.phase){
                         case 0: {
                             this.spr.setTexture("flyt1");
-                            this.scene.addScore(-50);
+                            this.scene.addScore(-25);
                             this.phase = 1;
                             break;
                         } case 1: {
@@ -146,13 +146,16 @@ export class Fly extends Button{
 		event: Phaser.Types.Input.EventData,
 	): void {
         if(this.fstate < 3){
+            
             super.onDown(pointer, localX, localY, event);
             this.fstate = 3;
             this.spr.setTexture("flydead");
             this.effect.setVisible(true);
             this.spr.removeInteractive();
-            this.scene.sound.play("flyslap", {volume: 0.35});
+            this.scene.sound.play("flyslap", {volume: 0.25});
             this.ptimer = [1000,1000];
+            
+           //this.scene.killFlies();
         }
 
 	}
@@ -162,7 +165,6 @@ export class Fly extends Button{
         this.spr.setTexture("flydead");
         this.effect.setVisible(true);
         this.spr.removeInteractive();
-        this.scene.sound.play("flyslap", {volume: 0.35});
         this.ptimer = [1000,1000];
     }
 

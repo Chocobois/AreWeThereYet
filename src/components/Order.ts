@@ -165,17 +165,21 @@ export class Order extends Button {
 		if (distance < 2) {
 			this.pill.setTint(Color.Cyan500);
 			this.text.setText("Perfect");
+			this.scene.sound.play("perfect", {volume: 0.5});
 			this.emit("score", 100);
 		} else if (distance < 5) {
 			this.pill.setTint(Color.Green600);
 			this.text.setText("Good");
+			this.scene.sound.play("ok", {volume: 0.5});
 			this.emit("score", 50);
 		} else if (distance < 10) {
 			this.pill.setTint(Color.Amber600);
+			this.scene.sound.play("bad", {volume: 0.5});
 			this.text.setText("Bad");
 			this.emit("score", 20);
 		} else {
 			this.pill.setTint(Color.Red700);
+			this.scene.sound.play("terrible", {volume: 0.5});
 			this.text.setText("Terrible");
 			this.emit("score", -50);
 		}

@@ -59,6 +59,10 @@ const audios: Audio[] = [
 	music("first.mp3", "m_first"),
 	sound("tree/rustle.mp3", "t_rustle", 0.5),
 	sound("flyslap.mp3", "flyslap", 0.5),
+	sound("perfect.mp3", "perfect", 0.5),
+	sound("ok.mp3", "ok", 0.5),
+	sound("bad.mp3", "bad", 0.5),
+	sound("terrible.mp3", "terrible", 0.5),
 ];
 
 /* Fonts */
