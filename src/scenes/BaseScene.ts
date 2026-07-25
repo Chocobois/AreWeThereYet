@@ -14,6 +14,7 @@ export interface TextStyle {
 export class BaseScene extends Phaser.Scene {
 	protected flashRect: Phaser.GameObjects.Rectangle | null;
 	protected cameraShakeValue: number;
+	public SFXvolume: number = 1;
 
 	constructor(config: Phaser.Types.Scenes.SettingsConfig) {
 		super(config);

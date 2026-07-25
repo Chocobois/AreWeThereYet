@@ -99,7 +99,7 @@ export class Fly extends Button{
                     switch(this.phase){
                         case 0: {
                             this.spr.setTexture("flyt1");
-                            this.scene.addScore(-25);
+                            this.scene.addScore(Math.trunc(-10*this.scene.multiplier));
                             this.phase = 1;
                             break;
                         } case 1: {

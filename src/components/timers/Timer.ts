@@ -70,19 +70,25 @@ export class Timer extends Button {
 
 		const prevSeconds = this.remainingSeconds;
 		this.remainingSeconds = Math.max(0, this.remainingSeconds - delta / 1000);
+	
 		const justHitNewSecond =
 			Math.floor(this.remainingSeconds) != Math.floor(prevSeconds);
 
 		this.text.setText(this.formatTime());
-
 		// Time switches to a new second
 		if (justHitNewSecond) {
 			this.bounceTimerText(1.1);
 		}
+
+		this.calculateSound(prevSeconds, this.remainingSeconds);
 		// Timer reaches zero
 		if (this.remainingSeconds == 0 && prevSeconds > 0) {
 			this.flashTimer();
 		}
+	}
+
+	calculateSound(ps: number, rs: number){
+		
 	}
 
 	onDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {

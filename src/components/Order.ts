@@ -22,8 +22,6 @@ export class Order extends Button {
 	private text: Phaser.GameObjects.Text;
 	private debugText: Phaser.GameObjects.Text;
 
-	public deleteFlag: boolean = false;
-
 	constructor(
 		scene: GameScene,
 		x: number,
@@ -35,7 +33,7 @@ export class Order extends Button {
 		scene.add.existing(this);
 		this.scene = scene;
 		this.requestedSeconds = seconds;
-		this.remainingSeconds = 30;
+		this.remainingSeconds = 30 - this.scene.orderExpiryAccel;
 
 		/* Sprites */
 
@@ -158,6 +156,7 @@ export class Order extends Button {
 		this.remainingSeconds = this.requestedSeconds;
 		this.text.setText(this.formatTime(this.requestedSeconds));
 		this.pill.setTint(Color.Blue600);
+		this.scene.sound.play("tooltip", {volume: 3*this.scene.SFXvolume});
 	}
 
 	completeOrder() {
@@ -165,23 +164,23 @@ export class Order extends Button {
 		if (distance < 2) {
 			this.pill.setTint(Color.Cyan500);
 			this.text.setText("Perfect");
-			this.scene.sound.play("perfect", {volume: 0.5});
+			this.scene.sound.play("perfect", {volume: 0.75*this.scene.SFXvolume});
 			this.emit("score", 100);
 		} else if (distance < 5) {
 			this.pill.setTint(Color.Green600);
 			this.text.setText("Good");
-			this.scene.sound.play("ok", {volume: 0.5});
+			this.scene.sound.play("ok", {volume: 0.75*this.scene.SFXvolume});
 			this.emit("score", 50);
 		} else if (distance < 10) {
 			this.pill.setTint(Color.Amber600);
-			this.scene.sound.play("bad", {volume: 0.5});
+			this.scene.sound.play("bad", {volume: 0.5*this.scene.SFXvolume});
 			this.text.setText("Bad");
-			this.emit("score", 20);
+			this.emit("score", Math.trunc(-10*this.scene.multiplier));
 		} else {
 			this.pill.setTint(Color.Red700);
-			this.scene.sound.play("terrible", {volume: 0.5});
+			this.scene.sound.play("terrible", {volume: 0.5*this.scene.SFXvolume});
 			this.text.setText("Terrible");
-			this.emit("score", -50);
+			this.emit("score", Math.trunc(-50*this.scene.multiplier));
 		}
 
 		// Debug
@@ -196,9 +195,8 @@ export class Order extends Button {
 		this.text.setText(text);
 
 		this.scene.addEvent(2000, this.moveOffscreen, this);
-
-		this.emit("score", -100);
-		this.deleteFlag = true;
+		this.scene.sound.play("expire", {volume: 1*this.scene.SFXvolume});
+		this.emit("score", Math.trunc(-100*this.scene.multiplier));
 	}
 
 	flashWarning() {

@@ -63,6 +63,10 @@ const audios: Audio[] = [
 	sound("ok.mp3", "ok", 0.5),
 	sound("bad.mp3", "bad", 0.5),
 	sound("terrible.mp3", "terrible", 0.5),
+	sound("expire.mp3", "expire", 0.5),
+	sound("tooltip.mp3", "tooltip", 0.5),
+	sound("eggtick.mp3", "eggtick", 0.5),
+	sound("neworder.mp3", "neworder", 0.5),
 ];
 
 /* Fonts */

@@ -9,4 +9,14 @@ export class GreenEgg extends Timer {
 		this.shadow.y = 10;
 		this.shadow.setScale(240 / this.shadow.width);
 	}
+
+	calculateSound(ps: number, rs: number): void {
+		const cantick =
+		Math.floor(rs) != Math.floor(ps);
+
+		if (cantick) {
+			this.scene.sound.play("eggtick", {volume: 2*this.scene.SFXvolume});
+		}
+
+	}
 }
