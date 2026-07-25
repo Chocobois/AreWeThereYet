@@ -22,6 +22,7 @@ export default function pwaMode(mode: string): PluginOption {
       ],
       globIgnores: ["**/node_modules/**/*", "sw.js", "workbox-*.js"],
       rollupFormat: "iife",
+      maximumFileSizeToCacheInBytes: 5000000
     },
     manifest: {
       name: title,
