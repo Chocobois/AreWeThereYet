@@ -45,6 +45,7 @@ export class GameScene extends BaseScene {
 	private tTimer: number[] = [-1000, -1000];
 	private inTutorial: boolean = false;
 	private previousBarIntro: number = -1;
+	private tAdvance: boolean = false;
 
 	private timers: Timer[];
 	private orders: Order[];
@@ -551,6 +552,8 @@ export class GameScene extends BaseScene {
 		if(this.speechBubbles.length < 1){
 			return;
 		}
+		let sbb = this.speechBubbles.filter((stb) => stb.popped);
+		sbb.forEach((sr) => sr.setAlpha(0.75));
 		for(let nn = 0; nn < this.speechBubbles.length; nn++){
 			if(!this.speechBubbles[nn].popped){
 				if(this.speechBubbles[nn].nt < 0){
@@ -562,6 +565,10 @@ export class GameScene extends BaseScene {
 					return;
 				}
 			}
+		}
+		if(!this.tAdvance){
+			this.fadeBubbles(450);
+			this.tAdvance = true;
 		}
 	}
 
@@ -580,7 +587,7 @@ export class GameScene extends BaseScene {
 				break;
 			} case 1: {
 				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
-				if(this.fadeBubbles(450)){
+				if(this.tAdvance){
 					if(this.tTimer[0] < 0){
 						this.tTimer = [500,500];
 					}
@@ -589,6 +596,7 @@ export class GameScene extends BaseScene {
 					this.tTimer[0] -= d;
 					if(this.tTimer[0] <= 0){
 						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
 						this.tPhase++;
 					}
 				}
@@ -604,7 +612,7 @@ export class GameScene extends BaseScene {
 				break;
 			} case 3: {
 				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
-				if(this.fadeBubbles(450)){
+				if(this.tAdvance){
 					if(this.tTimer[0] < 0){
 						this.tTimer = [500,500];
 					}
@@ -613,6 +621,7 @@ export class GameScene extends BaseScene {
 					this.tTimer[0] -= d;
 					if(this.tTimer[0] <= 0){
 						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
 						this.tPhase++;
 					}
 				}
@@ -628,7 +637,7 @@ export class GameScene extends BaseScene {
 				break;
 			} case 5: {
 				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
-				if(this.fadeBubbles(450)){
+				if(this.tAdvance){
 					if(this.tTimer[0] < 0){
 						this.tTimer = [500,500];
 					}
@@ -637,6 +646,7 @@ export class GameScene extends BaseScene {
 					this.tTimer[0] -= d;
 					if(this.tTimer[0] <= 0){
 						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
 						this.tPhase++;
 					}
 				}
@@ -652,7 +662,7 @@ export class GameScene extends BaseScene {
 				break;
 			} case 7: {
 				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
-				if(this.fadeBubbles(450)){
+				if(this.tAdvance){
 					if(this.tTimer[0] < 0){
 						this.tTimer = [500,500];
 					}
@@ -661,6 +671,7 @@ export class GameScene extends BaseScene {
 					this.tTimer[0] -= d;
 					if(this.tTimer[0] <= 0){
 						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
 						this.tPhase++;
 					}
 				}
@@ -676,7 +687,7 @@ export class GameScene extends BaseScene {
 				break;
 			} case 9: {
 				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
-				if(this.fadeBubbles(450)){
+				if(this.tAdvance){
 					if(this.tTimer[0] < 0){
 						this.tTimer = [500,500];
 					}
@@ -685,6 +696,7 @@ export class GameScene extends BaseScene {
 					this.tTimer[0] -= d;
 					if(this.tTimer[0] <= 0){
 						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
 						this.tPhase++;
 					}
 				}
@@ -700,7 +712,7 @@ export class GameScene extends BaseScene {
 				break;
 			} case 11: {
 				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
-				if(this.fadeBubbles(450)){
+				if(this.tAdvance){
 					if(this.tTimer[0] < 0){
 						this.tTimer = [500,500];
 					}
@@ -709,6 +721,7 @@ export class GameScene extends BaseScene {
 					this.tTimer[0] -= d;
 					if(this.tTimer[0] <= 0){
 						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
 						this.tPhase++;
 					}
 				}

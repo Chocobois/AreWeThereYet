@@ -39,7 +39,7 @@ export class SpeechBubble extends Phaser.GameObjects.Container{
         if(this.ft[0] > 0){
             this.ft[0] -= d;
             //console.log("FT: " + this.ft[0] + " / " + this.ft[1]);
-            this.setAlpha(Math.max(0,this.ft[0]/this.ft[1]));
+            this.setAlpha(0.75*Math.max(0,this.ft[0]/this.ft[1]));
         }
     }
 }
