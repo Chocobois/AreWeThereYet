@@ -51,9 +51,10 @@ export class GameScene extends BaseScene {
 	private orders: Order[];
 	private flies: Fly[];
 
+	private progressBar: Phaser.GameObjects.Image;
+
 	private totalScore: number;
 	private scoreText: Phaser.GameObjects.Text;
-	private timeText: Phaser.GameObjects.Text;
 	private textGetReady: Phaser.GameObjects.Text;
 
 	private stageTimer: number;
@@ -98,13 +99,16 @@ export class GameScene extends BaseScene {
 		{ order: null, x: 1920 - 175, y: 800 },
 	];
 
+	initTime: number;
+
 	constructor() {
 		super({ key: "GameScene" });
 		this.gameStarted = false;
 	}
-
+	
 	create(): void {
 		this.currentStage = structuredClone(GetStage());
+		this.initTime = this.currentStage.stageTime;
 		this.myLv = GetCurrentStage();
 
 		this.fade(false, 200, 0x000000);
@@ -129,10 +133,6 @@ export class GameScene extends BaseScene {
 
 		this.musicKitchentimerIntro.on('bar',  this.onBarIntro.bind(this));
 		this.musicKitchentimer.on('bar', this.onBar.bind(this));
-
-		this.timeText = this.addText({ x: this.CX, y: this.H - 100, size: 64, text: formatTime(this.currentStage.stageTime) })
-							.setStroke("black", 16)
-							.setOrigin(0.5,0);
 
 		this.textGetReady = this.addText({ x: this.CX, y: this.CY, size: 64, text: "Get ready . . ." })
 								.setStroke("black", 16)
@@ -170,7 +170,10 @@ export class GameScene extends BaseScene {
 		this.speechBubbleLayer.setDepth(50);
 		this.speechBubbles = [];
 
-
+		this.add.image(this.CX, this.H-20, "bar_bg").setOrigin(0.5,1);
+		this.progressBar = this.add.image(this.CX, this.H-20, "bar_progress").setOrigin(0.5,1);
+		this.add.image(this.CX, this.H-20, "bar_frame").setOrigin(0.5,1);
+		this.progressBar.setCrop(0,0, 1900, 200)
 		this.input.keyboard
         ?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         .on("down", this.click, this);
@@ -253,7 +256,8 @@ export class GameScene extends BaseScene {
 			}
 			this.currentStage.stageTime--;
 			if(this.currentStage.stageTime >= 0) {
-				this.timeText.setText(formatTime(this.currentStage.stageTime));
+				const timeLeftPercent = this.currentStage.stageTime / this.initTime;
+				this.progressBar.setCrop(0,0,1900*timeLeftPercent, 200);
 			}
 			this.timers.forEach((timer) => timer.decrementTime());
 			this.orders.forEach((order) => order.decrementTime());

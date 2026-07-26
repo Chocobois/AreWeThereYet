@@ -52,6 +52,10 @@ const images: Image[] = [
 	image("timers/hourglass_4.png", "timer_hourglass_4"),
 	image("timers/hourglass_5.png", "timer_hourglass_5"),
 
+	image("timers/bar_bg.png", "bar_bg"),
+	image("timers/bar_frame.png", "bar_frame"),
+	image("timers/bar_progress.png", "bar_progress"),
+
 	// Food
 	image("food/broccoli.png", "broccoli"),
 	image("food/eggplant.png", "eggplant"),
