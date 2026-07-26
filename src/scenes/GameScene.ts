@@ -36,6 +36,7 @@ export class GameScene extends BaseScene {
 
 	public musicKitchentimerIntro: Phaser.Sound.WebAudioSound;
 	public musicKitchentimer: Phaser.Sound.WebAudioSound;
+	private previousBarIntro: number = -1;
 
 	private timers: Timer[];
 	private orders: Order[];
@@ -189,9 +190,29 @@ export class GameScene extends BaseScene {
 		
 	}
 
+	checkDesync(prevBar: number, currBar: number) {
+		if ((prevBar < currBar) && (currBar - prevBar > 1)) {
+			console.log(`Possible intro music desync detected: bar ${prevBar} -> ${currBar}`)
+			return true
+		}
+		return false
+	}
+
 	onBarIntro(bar: number) {
+		// Check for skipped bars (excluding loop poitns)
+		this.checkDesync(this.previousBarIntro, bar)
+
 		if(this.gameStarted) {
 			const offset = (bar*0.5) % 4;
+
+			if (bar%16 <= 12) {
+				this.musicKitchentimerIntro.stop();
+				this.musicKitchentimer.play({
+					seek: 12 + offset
+				});
+			}
+
+			/*
 			if( bar <= 4 ) {
 				this.musicKitchentimerIntro.stop();
 				this.musicKitchentimer.play({
@@ -210,7 +231,10 @@ export class GameScene extends BaseScene {
 					seek: 12 + offset
 				});
 			}
+			 */
 		}
+
+		this.previousBarIntro = bar;
 	}
 	
 	onBar(bar: number) {
