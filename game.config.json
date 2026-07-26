@@ -3,9 +3,9 @@
   "title": "Eggcelent Clockwork",
   "description": "Use your egg timers to cook food on time and earn your living.",
   "itch": {
-    "upload": false,
-    "username": "username",
-    "game": "game-name"
+    "upload": true,
+    "username": "arcticfqx",
+    "game": "eggcelent-clockwork"
   },
   "neutralino": {
     "allow": ["app.exit", "window.center", "storage.*"],
