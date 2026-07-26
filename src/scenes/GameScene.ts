@@ -532,7 +532,7 @@ export class GameScene extends BaseScene {
 			}
 		}
 
-		const order = new Order(this, slot.x, slot.y, item.image, item.seconds+adj);
+		const order = new Order(this, slot.x, slot.y, item.image, item.seconds+adj, pr);
 		slot.order = order;
 		this.orders.push(order);
 
