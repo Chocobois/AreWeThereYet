@@ -92,6 +92,7 @@ const audios: Audio[] = [
 	sound("vo/two.mp3", "v_two", 1),
 	sound("vo/one.mp3", "v_one", 1),
 	sound("vo/go.mp3", "v_go", 1),
+	sound("vo/good_job.mp3", "v_good_job", 1),
 ];
 
 /* Fonts */
