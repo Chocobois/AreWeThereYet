@@ -7,7 +7,9 @@ export class StoryScene extends BaseScene {
 
 	private dialogue: Phaser.GameObjects.Text;
 	private dialogue2: Phaser.GameObjects.Text;
-    private phaseTimer: number = 1000;
+    private indicator: Phaser.GameObjects.Text;
+    private defaultTimer: number = 1000;
+    private phaseTimer: number = this.defaultTimer;
     private phase: number = 0;
     private textMode: number = -1;
 
@@ -49,6 +51,19 @@ export class StoryScene extends BaseScene {
         this.dialogue2.setWordWrapWidth(800);
         this.dialogue2.setVisible(true);
 
+        this.indicator = this.addText({
+			x: 0,
+			y: 0,
+			size: 60,
+			text: String.fromCharCode(0x2B06),
+		});
+        this.indicator.setDepth(4);
+		this.indicator.setStroke("black", 16);
+		this.indicator.setOrigin(0, 0);
+        this.indicator.setVisible(true);
+        this.indicator.setRotation(Math.PI);
+        this.indicator.setAlpha(0);
+
 
         this.input.keyboard
         ?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
@@ -64,12 +79,28 @@ export class StoryScene extends BaseScene {
 
 	}
 
+    currentText() {
+        switch (this.textMode) {
+            case 0: return this.dialogue2;
+            default: // fall-through
+            case 1: return this.dialogue;
+        }
+    }
+
+    textSize() {
+        return Phaser.GameObjects.GetTextSize(
+            this.currentText(),
+            this.currentText().getTextMetrics(),
+            this.currentText().getWrappedText(),
+        );
+    }
+
     forward(){
         if(this.phaseTimer > 0){
             return;
         }
         if(this.phaseTimer <= 0){
-            this.phaseTimer = 1000;
+            this.phaseTimer = this.defaultTimer;
         }
         switch(this.phase){
             case 0: {
@@ -94,6 +125,7 @@ export class StoryScene extends BaseScene {
                 this.sound.play("scroll", {volume: 0.5});
                 this.phase++;
                 this.flash(500,0x000000, 1);
+                this.indicator.setAlpha(0);
                 break;
             } case 3: {
                 this.dialogue2.setVisible(true);
@@ -114,7 +146,7 @@ export class StoryScene extends BaseScene {
             } case 5: {
                 this.dialogue2.setVisible(false);
                 this.addEvent(500, () => {
-                    this.fade(true, 1000, 0x000000);
+                    this.fade(true, this.defaultTimer, 0x000000);
                     this.addEvent(1050, () => {
                         this.scene.start("GameScene");
                     });
@@ -131,6 +163,10 @@ export class StoryScene extends BaseScene {
 	update(time: number, delta: number) {
         if(this.phaseTimer > 0){
             this.phaseTimer -= delta;
+
+            if (this.indicator.alpha > 0)
+                this.indicator.setAlpha(Math.max(0,(this.phaseTimer-500)/500));
+
             switch(this.textMode){
                 case 0:{
                     this.dialogue.setAlpha(Math.max(0,(this.phaseTimer-500)/500));
@@ -142,7 +178,22 @@ export class StoryScene extends BaseScene {
                     break;
                 }
             }
+        } else {
+            if (this.indicator.alpha == 0 && this.phase < 6)
+            this.tweens.add({
+                targets: this.indicator,
+                duration: 400,
+                alpha: 1,
+            })
+            const size = this.textSize();
+            this.indicator.setPosition(
+                this.currentText().x + (size.lineWidths.at(-1) ?? 0) + 69,
+                this.currentText().y + size.lines * size.lineHeight
+            );
         }
+
+        const squish = 1.0 + 0.04 * Math.sin((6 * time) / 1000);
+		this.indicator.setScale(1.0, squish);
 	}
 
 	/* Orders */
