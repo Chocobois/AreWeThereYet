@@ -20,7 +20,7 @@ export class Golen extends Timer {
 		if (cantick) {
 			const {volume, pan} = this.getSoundPosition();
 			this.scene.sound.play("gsm", {
-				volume: volume * 3*this.scene.SFXvolume,
+				volume: volume * this.scene.SFXvolume * 0.8,
 				pan,
 			});
 		}

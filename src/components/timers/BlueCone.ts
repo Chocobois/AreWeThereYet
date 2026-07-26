@@ -17,7 +17,7 @@ export class BlueCone extends Timer {
 		if (cantick) {
 			const {volume, pan} = this.getSoundPosition();
 			this.scene.sound.play("rattle", {
-				volume: volume * 3*this.scene.SFXvolume,
+				volume: volume * this.scene.SFXvolume / 3,
 				pan,
 			});
 		}
