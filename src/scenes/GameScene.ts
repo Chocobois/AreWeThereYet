@@ -110,7 +110,12 @@ export class GameScene extends BaseScene {
 		super({ key: "GameScene" });
 		this.gameStarted = false;
 	}
-	
+
+	init(data = {endlessMode: false}) {
+		console.log("Endless mode selected?:", !!data.endlessMode);
+		// TODO Lumie please fix this thank you mwah
+	}
+
 	create(): void {
 		this.currentStage = structuredClone(GetStage());
 		this.initTime = this.currentStage.stageTime;
@@ -180,7 +185,7 @@ export class GameScene extends BaseScene {
 		this.scoreText.setStroke("black", 16);
 		this.scoreText.setOrigin(0.5, 0);
 
-		this.startButton = new StartButton(this, this.CX, this.CY);
+		this.startButton = new StartButton(this, this.CX, this.CY, "Start!");
 		this.startButton.setVisible(false);
 		this.startButton.on("click", () => {
 			this.startButton.setVisible(false);

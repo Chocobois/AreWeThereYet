@@ -3,6 +3,7 @@ import { BaseScene } from "@/scenes/BaseScene";
 import { Music } from "@/components/Music";
 
 import { title, version } from "@/version.json";
+import StartButton from '@/components/buttons/StartButton';
 
 const creditsLeft = `
 @NightLightLumie
@@ -35,7 +36,9 @@ export class TitleScene extends BaseScene {
 
 	public musicTitle: Phaser.Sound.WebAudioSound;
 	public select: Phaser.Sound.WebAudioSound;
-	public select2: Phaser.Sound.WebAudioSound;
+
+	public modeStory: StartButton;
+	public modeEndless: StartButton;
 
 	public isStarting: boolean;
 
@@ -157,9 +160,21 @@ export class TitleScene extends BaseScene {
 			this.musicTitle.on("beat", this.onBeat, this);
 
 			// this.select = this.sound.add("dayShift", { volume: 0.8, rate: 1.0 }) as Phaser.Sound.WebAudioSound;
-			// this.select2 = this.sound.add("nightShift", { volume: 0.8, rate: 1.0 }) as Phaser.Sound.WebAudioSound;
 		}
 		this.musicTitle.play();
+
+		this.modeStory = new StartButton(this, this.W * 0.2, this.H * 0.5, "Story mode", 2.5);
+		this.modeStory.setVisible(false);
+		this.modeStory.on("click", () => this.startGame(0));
+		this.modeStory.setScale(4, 1);
+		this.modeStory.setAlpha(0);
+
+		this.modeEndless = new StartButton(this, this.W * 0.2, this.H * 0.64, "Endless mode", 2.5);
+		this.modeEndless.setVisible(false);
+		this.modeEndless.on("click", () => this.startGame(1));
+		this.modeEndless.setScale(4, 1);
+		this.modeStory.setAlpha(0);
+
 
 		// Input
 
@@ -220,9 +235,9 @@ export class TitleScene extends BaseScene {
 
 		this.subtitle.setScale(1 + 0.02 * Math.sin((5 * time) / 1000));
 
-		if (this.isStarting) {
+		/* if (this.isStarting) {
 			this.subtitle.setAlpha(0.6 + 0.4 * Math.sin((50 * time) / 1000));
-		}
+		} */
 	}
 
 	progress() {
@@ -235,21 +250,17 @@ export class TitleScene extends BaseScene {
 			this.subtitle.setAlpha(1);
 		} else if(this.sTimer > 0){
 			return;
-		} else if (!this.isStarting) {
-			this.sound.play("ding", { volume: 0.18 });
-			// this.sound.play("m_slice", { volume: 0.3 });
-			// this.sound.play("u_attack_button", { volume: 0.5 });
-			// this.select2.play();
-			this.isStarting = true;
-			this.flash(3000, 0xffffff, 0.6);
+		} else {
+			this.modeStory.setVisible(true);
+			this.modeEndless.setVisible(true);
+			this.subtitle.setX(-2000);
 
-			this.addEvent(1000, () => {
-				this.fade(true, 1000, 0x000000);
-				this.addEvent(1050, () => {
-					this.musicTitle.stop();
-					this.scene.start("StoryScene");
-				});
+			this.tweens.add({
+				targets: [this.modeStory, this.modeEndless],
+				duration: 500,
+				alpha: 1,
 			});
+
 		}
 	}
 
@@ -265,5 +276,25 @@ export class TitleScene extends BaseScene {
 
 	onBeat(time: number) {
 		// this.select.play();
+	}
+
+	startGame(gamemode: number /* 0=story 1=endless */) {
+		if (this.isStarting) return;
+
+		this.sound.play("ding", { volume: 0.18 });
+		this.isStarting = true;
+		this.flash(3000, 0xffffff, 0.6);
+
+		this.addEvent(1000, () => {
+			this.fade(true, 1000, 0x000000);
+			this.addEvent(1050, () => {
+				this.musicTitle.stop();
+				switch(gamemode) {
+					default: // fall-through
+					case 0: this.scene.start("StoryScene"); break;
+					case 1: this.scene.start("GameScene", {endlessMode: true}); break;
+				}
+			});
+		});
 	}
 }
