@@ -174,7 +174,7 @@ export class GameScene extends BaseScene {
 		this.speechBubbles = [];
 
 		this.add.image(this.CX, this.H-20, "bar_bg").setOrigin(0.5,1);
-		this.progressBar = this.add.image(this.CX, this.H-20, "bar_progress").setOrigin(0.5,1);
+		this.progressBar = this.add.image(60, this.H-20, "bar_progress").setOrigin(0,1);
 		this.add.image(this.CX, this.H-20, "bar_frame").setOrigin(0.5,1);
 		this.progressBar.setCrop(0,0, 1900, 200)
 		// From DiceEmUp
@@ -277,6 +277,12 @@ export class GameScene extends BaseScene {
 			if(this.currentStage.stageTime >= 0) {
 				const timeLeftPercent = this.currentStage.stageTime / this.initTime;
 				this.progressBar.setCrop(0,0,1900*timeLeftPercent, 200);
+				this.tweens.add({
+					targets: this.progressBar,
+					scaleX: { from: 0.99, to: 1 },
+					ease: "Cubic.Out",
+					duration: 200,
+				})
 			}
 			this.timers.forEach((timer) => timer.decrementTime());
 			this.orders.forEach((order) => order.decrementTime());
