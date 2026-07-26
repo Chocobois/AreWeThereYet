@@ -9,4 +9,18 @@ export class BlueCone extends Timer {
 		this.shadow.y = -30;
 		this.shadow.setScale(350 / this.shadow.width);
 	}
+
+	calculateSound(ps: number, rs: number): void {
+		const cantick =
+		Math.floor(rs) != Math.floor(ps);
+
+		if (cantick) {
+			const {volume, pan} = this.getSoundPosition();
+			this.scene.sound.play("rattle", {
+				volume: volume * 3*this.scene.SFXvolume,
+				pan,
+			});
+		}
+
+	}
 }

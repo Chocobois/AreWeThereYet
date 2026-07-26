@@ -12,4 +12,18 @@ export class Golen extends Timer {
 		this.shadow.y = 40;
 		this.shadow.setScale(260 / this.shadow.width);
 	}
+
+	calculateSound(ps: number, rs: number): void {
+		const cantick =
+		Math.floor(rs) != Math.floor(ps);
+
+		if (cantick) {
+			const {volume, pan} = this.getSoundPosition();
+			this.scene.sound.play("gsm", {
+				volume: volume * 3*this.scene.SFXvolume,
+				pan,
+			});
+		}
+
+	}
 }
