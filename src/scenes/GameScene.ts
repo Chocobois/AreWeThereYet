@@ -123,7 +123,7 @@ export class GameScene extends BaseScene {
 
 		this.textGetReady = this.addText({ x: this.CX, y: this.CY, size: 64, text: "Get ready . . ." })
 								.setStroke("black", 16)
-								.setOrigin(0.5,0)
+								.setOrigin(0.5,0.5)
 								.setVisible(false);
 
 		this.orders = [];
@@ -224,19 +224,46 @@ export class GameScene extends BaseScene {
 			this.textGetReady.setVisible(false);
 		} else {
 			if(bar == 28) {
-				this.textGetReady.setText("3")
+				this.textGetReady.setFontSize(128);
+				this.textGetReady.setText("3");
+				this.tweens.add({
+					targets: this.textGetReady,
+					scale: { from: 2, to: 1 },
+					ease: "Cubic.Out",
+					duration: 200,
+				});
 				this.sound.play('v_three');
 			}
 			if(bar == 29) {
-				this.textGetReady.setText("2")
+				this.textGetReady.setText("2");
+				this.tweens.add({
+					targets: this.textGetReady,
+					rotation: { from: -Math.PI*2, to: 0 },
+					ease: "Cubic.Out",
+					duration: 200,
+				});
 				this.sound.play('v_two');
 			}
 			if(bar == 30) {
-				this.textGetReady.setText("1")
+				this.textGetReady.setText("1");
+				this.tweens.add({
+					targets: this.textGetReady,
+					scaleX: { from: 1, to: 0.25 },
+					scaleY: { from: 1, to: 3 },
+					ease: "Cubic.Out",
+					duration: 100,
+					yoyo: true
+				});
 				this.sound.play('v_one');
 			}
 			if(bar == 31) {
 				this.textGetReady.setText("Go!")
+				this.tweens.add({
+					targets: this.textGetReady,
+					scale: { from: 4, to: 1 },
+					ease: "Cubic.Out",
+					duration: 200,
+				});
 				this.sound.play('v_go');
 			}
 		}
