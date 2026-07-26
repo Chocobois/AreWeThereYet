@@ -111,15 +111,11 @@ export class GameScene extends BaseScene {
 		this.gameStarted = false;
 	}
 
-	init(data = {endlessMode: false}) {
-		console.log("Endless mode selected?:", !!data.endlessMode);
-		// TODO Lumie please fix this thank you mwah
-	}
-
 	create(): void {
+		this.myLv = GetCurrentStage();
+		console.log("Current Stage: " + this.myLv);
 		this.currentStage = structuredClone(GetStage());
 		this.initTime = this.currentStage.stageTime;
-		this.myLv = GetCurrentStage();
 
 		this.myTimers = GetTimerList();
 
@@ -323,7 +319,9 @@ export class GameScene extends BaseScene {
 				this.onEndStage();
 				return;
 			}
-			this.currentStage.stageTime--;
+			if(this.myLv != -1){
+				this.currentStage.stageTime--;
+			}
 			if(this.currentStage.stageTime >= 0) {
 				const timeLeftPercent = this.currentStage.stageTime / this.initTime;
 				this.progressBar.setCrop(0,0,1900*timeLeftPercent, 200);

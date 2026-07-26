@@ -4,6 +4,7 @@ import { Music } from "@/components/Music";
 
 import { title, version } from "@/version.json";
 import StartButton from '@/components/buttons/StartButton';
+import { SetEndless } from "@/components/Stages";
 
 const creditsLeft = `
 @NightLightLumie
@@ -290,9 +291,19 @@ export class TitleScene extends BaseScene {
 			this.addEvent(1050, () => {
 				this.musicTitle.stop();
 				switch(gamemode) {
-					default: // fall-through
-					case 0: this.scene.start("StoryScene"); break;
-					case 1: this.scene.start("GameScene", {endlessMode: true}); break;
+					default: {
+						this.scene.start("StoryScene"); 
+						break;	
+					} // fall-through
+					case 0: {
+						this.scene.start("StoryScene"); 
+						break;
+					}
+					case 1: {
+						SetEndless();
+						this.scene.start("GameScene"); 
+						break;
+					}
 				}
 			});
 		});

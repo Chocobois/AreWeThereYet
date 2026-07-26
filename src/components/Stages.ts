@@ -34,6 +34,16 @@ const stages = [
     }
 ] satisfies Array<Stage>;
 
+const endlessStage: Stage = {
+    id: -1,
+    stageTime: 999999999,
+    events: [
+        {
+
+        }
+    ]
+}
+
 const timerList = ["golen", "bluecone", "hourglass"];
 
 let currentStage = 0;
@@ -48,7 +58,13 @@ export function GetTimerList(){
 }
 
 export function GetStage() {
-    return stages[currentStage];
+    if(currentStage != -1){
+        return stages[currentStage];
+    } else {
+        console.log("Returning endless stage");
+        return endlessStage;
+    }
+
 }
 
 export function GetCurrentStage() {
