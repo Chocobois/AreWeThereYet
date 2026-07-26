@@ -32,9 +32,11 @@ const Data = {
 		end: 2854884 / 48000 + overlap,
 	},
 	m_kitchentimer: {
-		offset: 0,
+		offset: 1180 / 48000,
 		bpm: 120,
 		loop: true,
+		start: 1180 / 48000 + 16 + overlap,
+		end:   1180 / 48000 + 78 + overlap,
 	}
 };
 
