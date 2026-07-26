@@ -37,6 +37,9 @@ const images: Image[] = [
 	image("characters/flydead.png", "flydead"),
 
 	image("characters/smack.png", "smack"),
+
+	image("characters/sb_jbun.png", "sb_jbun"),
+	image("characters/sb_kobold.png", "sb_kobold"),
 	// Car
 	image("front.png", "front"),
 
