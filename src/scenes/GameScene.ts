@@ -869,6 +869,27 @@ export class GameScene extends BaseScene {
 		if(!this.inTutorial){
 			return;
 		}
+
+		switch(this.myLv){
+			case 0: {
+				this.updateTutorialLv1(t, d);
+				break;
+			} case 1: {
+				this.updateTutorialLv2(t, d);
+				break;
+			} case 2: {
+				this.updateTutorialLv3(t, d);
+				break;
+			} default: {
+				this.inTutorial = false;
+				this.startButton.setVisible(true);
+				break;
+			}
+		}
+		
+	}
+
+	updateTutorialLv1(t: number, d: number){
 		switch(this.tPhase){
 			case 0: {
 				this.speechBubbles.push(new SpeechBubble(this, 40, 0, "sb_kobold", "Well... what am I even looking at?"));
@@ -1027,7 +1048,278 @@ export class GameScene extends BaseScene {
 				this.startButton.setVisible(true);
 			}
 		}
-		
+	}
+
+	updateTutorialLv2(t: number, d: number){
+		switch(this.tPhase){
+			case 0: {
+				this.speechBubbles.push(new SpeechBubble(this, 40, 0, "sb_kobold", "Ugh, that was a rough night"));
+				this.speechBubbles.push(new SpeechBubble(this, 240, 360, "sb_jbun", "Listen up, maggot"));
+				this.speechBubbles.push(new SpeechBubble(this, 40, 720, "sb_jbun", "You did an acceptable job last night."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 1: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 2: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 0, "sb_kobold", "Great..."));
+				this.speechBubbles.push(new SpeechBubble(this, 1280, 360, "sb_jbun", "But there's been a bunch of flies around here!"));
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 720, "sb_kobold", "Flies have no respect for fine cuisine."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000];
+				this.tPhase++;
+				break;
+			} case 3: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 4: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 40, 0, "sb_kobold", "...And you want me to swat them?"));
+				this.speechBubbles.push(new SpeechBubble(this, 240, 360, "sb_jbun", "Send them back to their maker!"));
+				this.speechBubbles.push(new SpeechBubble(this, 40, 720, "sb_jbun", "But if you take too long, our customers will complain!"));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 5: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 6: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 0, "sb_kobold", "And what about those odd-timed orders?"));
+				this.speechBubbles.push(new SpeechBubble(this, 1280, 360, "sb_jbun", "Oh yeah, those. We've been getting some particular customers."));
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 720, "sb_jbun", "We're popular now! It's up to you to satisfy them."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 7: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 8: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 40, 0, "sb_jbun", "Night's about to begin. Looks like a big one."));
+				this.speechBubbles.push(new SpeechBubble(this, 240, 360, "sb_jbun", "DO ME PROUD!"));
+				this.speechBubbles.push(new SpeechBubble(this, 40, 720, "sb_kobold", "I might not survive much more of this..."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 9: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 10: {
+				this.destroyBubbles();
+				this.tPhase++;
+			} default: {
+				this.inTutorial = false;
+				this.startButton.setVisible(true);
+			}
+		}
+	}
+
+	updateTutorialLv3(t: number, d: number){
+		switch(this.tPhase){
+			case 0: {
+				this.speechBubbles.push(new SpeechBubble(this, 40, 0, "sb_kobold", "...You look nervous."));
+				this.speechBubbles.push(new SpeechBubble(this, 240, 360, "sb_jbun", "...It's time."));
+				this.speechBubbles.push(new SpeechBubble(this, 40, 720, "sb_jbun", "The forsaken one approaches."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 1: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 2: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 0, "sb_kobold", "The forsaken one??"));
+				this.speechBubbles.push(new SpeechBubble(this, 1280, 360, "sb_jbun", "The HEALTH INSPECTOR!"));
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 720, "sb_kobold", "That... sounds bad. Especially given standards around here."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000];
+				this.tPhase++;
+				break;
+			} case 3: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 4: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 40, 0, "sb_jbun", "Indeed. And tonight we will be open for extra hours."));
+				this.speechBubbles.push(new SpeechBubble(this, 240, 360, "sb_jbun", "The HEALTH INSPECTOR will give out exacting requests."));
+				this.speechBubbles.push(new SpeechBubble(this, 40, 720, "sb_jbun", "If you deliver anything but perfection, he will fail the order immediately!"));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 5: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 6: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 0, "sb_kobold", "Why me..."));
+				this.speechBubbles.push(new SpeechBubble(this, 1280, 360, "sb_jbun", "But I have confidence in you. You are the most promising of my pupils."));
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 720, "sb_kobold", "I am extremely concerned about that..."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 7: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 8: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 40, 0, "sb_jbun", "And again, the night begins."));
+				this.speechBubbles.push(new SpeechBubble(this, 240, 360, "sb_jbun", "Go! And fight until the bitter end!"));
+				this.speechBubbles.push(new SpeechBubble(this, 40, 720, "sb_kobold", "I'm done for. I'm cooked. Goodbye, cruel world."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 9: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 12: {
+				this.destroyBubbles();
+				this.tPhase++;
+			} default: {
+				this.inTutorial = false;
+				this.startButton.setVisible(true);
+			}
+		}
 	}
 
 	fadeBubbles(t: number): boolean{
