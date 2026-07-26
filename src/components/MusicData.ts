@@ -32,18 +32,25 @@ const Data = {
 		end: 2854884 / 48000 + overlap,
 	},
 	m_kitchentimer: {
-		offset: 1180 / 48000,
+		offset: 1180 / 44100,
 		bpm: 120,
 		loop: true,
-		start: 1180 / 48000 + 16 + overlap,
-		end:   1180 / 48000 + 78 + overlap,
+		start: 1180 / 44100 + 16 + overlap,
+		end:   1180 / 44100 + 78 + overlap,
 	},
 	m_kitchentimer_intro: {
-		offset: 1180 / 48000,
+		offset: 1180 / 44100,
 		bpm: 120,
 		loop: true,
-		start: 1180 / 48000 + overlap,
-		end:   1180 / 48000 + overlap + 8,
+		start: 1180 / 44100 + overlap/2,
+		end:   1180 / 44100 + overlap/2 + 8,
+	},
+	m_kitchentimer_side: {
+		offset: 0.125,
+		bpm: 120,
+		loop: true,
+		start: 2.125 + overlap/2,
+		end:  18.125 + overlap/2,
 	}
 };
 

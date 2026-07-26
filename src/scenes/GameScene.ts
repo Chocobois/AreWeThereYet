@@ -229,6 +229,11 @@ export class GameScene extends BaseScene {
 		return false
 	}
 
+	onEndStage() {
+		this.gameStarted = false;
+		console.log("Stage over");
+	}
+
 	onBarIntro(bar: number) {
 		// Check for skipped bars (excluding loop poitns)
 		this.checkDesync(this.previousBarIntro, bar)
@@ -270,12 +275,16 @@ export class GameScene extends BaseScene {
 	
 	onBar(bar: number) {
 		if(bar >= 32) {
-			this.timers.forEach((timer) => timer.decrementTime());
-			this.orders.forEach((order) => order.decrementTime());
-	
-			if(--this.currentStage.stageTime > 0) {
+			if(this.currentStage.stageTime == 0) {
+				this.onEndStage();
+				return;
+			}
+			this.currentStage.stageTime--;
+			if(this.currentStage.stageTime >= 0) {
 				this.timeText.setText(formatTime(this.currentStage.stageTime));
 			}
+			this.timers.forEach((timer) => timer.decrementTime());
+			this.orders.forEach((order) => order.decrementTime());
 			this.textGetReady.setVisible(false);
 		} else {
 			if(bar == 28) {
@@ -485,6 +494,10 @@ export class GameScene extends BaseScene {
 		if ((this.flies.length < this.maxFlies) && (Math.random() < this.flySpawnChance)) {
 			this.spawnFly();
 		}
+	}
+
+	roundEnd() {
+
 	}
 
 	addScore(n: number){
