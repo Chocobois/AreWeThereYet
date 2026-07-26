@@ -12,7 +12,6 @@ const images: Image[] = [
 	image("backgrounds/shopkeep_speech.png", "shopkeep_speech"),
 	image("backgrounds/timerbox.png", "timerbox"),
 
-
 	image("backgrounds/st1.png", "st1"),
 	image("backgrounds/st2.png", "st2"),
 
@@ -27,7 +26,6 @@ const images: Image[] = [
 	image("backgrounds/kbun.png", "kbun"),
 	image("backgrounds/kchar.png", "kchar"),
 
-
 	//Fly
 	image("characters/flyf1.png", "flyf1"),
 	image("characters/flyf2.png", "flyf2"),
@@ -40,6 +38,7 @@ const images: Image[] = [
 
 	image("characters/sb_jbun.png", "sb_jbun"),
 	image("characters/sb_kobold.png", "sb_kobold"),
+
 	// Car
 	image("front.png", "front"),
 
@@ -61,6 +60,7 @@ const images: Image[] = [
 	image("food/steak.png", "steak"),
 
 	image("bubble.png", "bubble"),
+	image("bubble_p.png", "bubble_p"),
 	image("pill.png", "pill"),
 	image("shadow.png", "shadow"),
 ];
@@ -74,6 +74,8 @@ const audios: Audio[] = [
 	music("first.mp3", "m_first"),
 	music("kitchentimer.mp3", "m_kitchentimer"),
 	music("kitchentimer_intro.mp3", "m_kitchentimer_intro"),
+	music("kitchentimer_side.mp3", "m_kitchentimer_side"),
+	sound("kitchentimer_side_end.mp3", "m_kitchentimer_side_end"),
 
 	sound("tree/rustle.mp3", "t_rustle", 0.5),
 	sound("flyslap.mp3", "flyslap", 0.5),

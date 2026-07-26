@@ -67,12 +67,16 @@ export class GameScene extends BaseScene {
 	public maxActiveOrders: number;
 	public orderDelay: number;
 	public offOrderChance: number;
+	public offOrderQueue: number;
+	public premiumOrderQueue: number;
+	public premiumOrderChance: number;
 
 	public multiplier: number;
 	public orderExpiryAccel: number = 0;
 	public difficulty: number;
 
 	private queueUpdate: boolean;
+	private pendingBeat: boolean;
 	private pauseOrders: boolean;
 
 	private orderTimer: number[]; 
@@ -325,15 +329,23 @@ export class GameScene extends BaseScene {
 					duration: 200,
 				});
 				this.sound.play('v_go');
+				this.pendingBeat = false;
 			}
 		}
 	}
 
 	setBasicVariables(){
+		this.pendingBeat = true;
+		this.doTutorial = true;
+		this.tPhase = 0;
+		this.tTimer = [-1000, -1000];
+		this.inTutorial = false;
+		this.previousBarIntro = -1;
+		this.tAdvance = false;
 		this.initDifficulty();
 		this.queueUpdate = false;
 		this.orderTimer = [this.orderDelay, this.orderDelay];
-		this.flyTimer = [this.flySpawnDelay+30000,this.flySpawnDelay];
+		this.flyTimer = [this.flySpawnDelay,this.flySpawnDelay];
 		this.pauseOrders = false;
 	}
 
@@ -349,47 +361,53 @@ export class GameScene extends BaseScene {
 		this.maxActiveOrders = 1;
 		this.orderDelay = 7500;
 		this.offOrderChance = 0;
+		this.offOrderQueue = 0;
+		this.premiumOrderChance = 0;
+		this.premiumOrderQueue = 0;
 		this.orderExpiryAccel = 0;
 
 		this.doTutorial = true;
 		this.inTutorial = true;
+
+		this.rampDifficultyLv1();
 	}
 
 	update(time: number, delta: number) {
 		if(this.inTutorial){
 			this.updateTutorial(time,delta);
-		}
-		this.timers.forEach((timer) => {
-			timer.update(time, delta);
-			timer.setDepth(10 + timer.y / 1000);
-		});
-
-		this.orders.forEach((order) => {
-			order.update(time, delta);
-			order.setDepth(20);
-		});
-
-		this.updateOrderSpawn(time, delta);
-
-		for(let fl = (this.flies.length-1); fl >= 0; fl--){
-			this.flies[fl].update(time, delta);
-			this.flies[fl].setDepth(40);
-			if(this.flies[fl].deleteFlag) {
-				this.flies[fl].destroy();
-				this.flies.splice(fl,1);
+		} else{
+			this.timers.forEach((timer) => {
+				timer.update(time, delta);
+				timer.setDepth(10 + timer.y / 1000);
+			});
+	
+			this.orders.forEach((order) => {
+				order.update(time, delta);
+				order.setDepth(20);
+			});
+	
+			for(let fl = (this.flies.length-1); fl >= 0; fl--){
+				this.flies[fl].update(time, delta);
+				this.flies[fl].setDepth(40);
+				if(this.flies[fl].deleteFlag) {
+					this.flies[fl].destroy();
+					this.flies.splice(fl,1);
+				}
 			}
+	
+			// this.scoreText.setText(`Score: ${this.totalScore}`);
+			if (!this.pendingBeat){
+				this.updateFlySpawn(time, delta);
+				this.updateOrderSpawn(time, delta);
+				this.stageTimer -= delta;
+				if(this.stageTimer <= 0){
+					console.log("Increased difficulty");
+					this.increaseDifficulty();
+					this.stageTimer = 60000;
+				}
+			}
+
 		}
-
-		this.updateFlySpawn(time, delta);
-
-		// this.scoreText.setText(`Score: ${this.totalScore}`);
-
-		this.stageTimer -= delta;
-		if(this.stageTimer <= 0){
-			this.increaseDifficulty();
-			this.stageTimer = 60000;
-		}
-
 		this.scoreText.setText(`Score: ${this.totalScore}`);
 
 
@@ -420,8 +438,19 @@ export class GameScene extends BaseScene {
 		const item = Phaser.Math.RND.pick(orderItems);
 
 		let adj = 0;
-		if(Math.random() < this.offOrderChance){
+		if((this.offOrderQueue > 0) || (Math.random() < this.offOrderChance)){
 			adj = 1+Math.trunc(Math.random()*9);
+			if(this.offOrderQueue > 0){
+				this.offOrderQueue--;
+			}
+		}
+		
+		let pr = true;
+		if((this.premiumOrderQueue > 0) || (Math.random() < this.premiumOrderChance)){
+			pr = true;
+			if(this.premiumOrderQueue > 0){
+				this.premiumOrderQueue--;
+			}
 		}
 
 		const order = new Order(this, slot.x, slot.y, item.image, item.seconds+adj);
@@ -496,6 +525,174 @@ export class GameScene extends BaseScene {
 
 	increaseDifficulty(){
 		this.difficulty++;
+		this.rampDifficultyLv1();
+	}
+
+	rampDifficultyLv1(){
+		switch(this.difficulty){
+			case 0:{
+				this.maxActiveOrders = 1;
+				this.maxNewOrders = 1;
+				this.orderDelay = 7500;
+				break;
+			}
+			case 1: {
+				this.maxActiveOrders = 2;
+				break;
+			} case 2: {
+				this.maxActiveOrders = 3;
+				this.orderDelay = 6000;
+				break;
+			} case 3: {
+				this.maxNewOrders = 2;
+				this.offOrderQueue = 1;
+				break;
+			} case 4: {
+				this.offOrderQueue = 1;
+				this.orderExpiryAccel = 10;
+				this.orderDelay = 5000;
+				break;
+			} default: {
+				break;
+			}
+		}
+	}
+
+	rampDifficultyLv2(){
+		switch(this.difficulty){
+			case 0:{
+				this.offOrderQueue = 1;
+				this.maxActiveOrders = 2;
+				this.maxNewOrders = 1;
+			} case 1: {
+				this.offOrderQueue = 1;
+				this.maxActiveOrders = 3;
+				this.maxNewOrders = 1;
+				break;
+			} case 2: {
+				this.offOrderQueue = 1;
+				this.maxActiveOrders = 3;
+				this.maxNewOrders = 2;
+				this.flySpawnChance = 0.5;
+				this.flySpawnDelay = 7500;
+				this.maxFlies = 1;
+				break;
+			} case 3: {
+				this.offOrderQueue = 2;
+				this.orderExpiryAccel = 5;
+				this.maxActiveOrders = 4;
+				this.maxNewOrders = 3;
+				this.flySpawnChance = 0.75;
+				this.maxFlies = 2;
+				break;
+			} case 4: {
+				this.offOrderQueue = 2;
+				this.offOrderChance = 0.25;
+				this.maxNewOrders = 3;
+				this.flySpawnChance = 0.9;
+				this.maxFlies = 2;
+				this.orderDelay = 6000;
+				break;
+			} case 5 : {
+				this.offOrderQueue = 2;
+				this.offOrderChance = 0.4;
+				this.maxFlies = 3;
+				this.maxNewOrders = 4;
+				this.flySpawnDelay = 5500;
+				break;
+			} case 6: {
+				this.offOrderQueue = 2;
+				this.offOrderChance = 0.5;
+				this.orderExpiryAccel = 10;
+				this.orderDelay = 5000;
+				this.flySpawnDelay = 5000;
+				this.flySpawnChance = 1;
+				this.maxFlies = 4;
+				break;
+			} default: {
+				break;
+			}
+		}
+	}
+
+	rampDifficultyLv3(){
+		switch(this.difficulty){
+			case 0: {
+				this.premiumOrderQueue = 1;
+				this.maxActiveOrders = 2;
+				this.maxNewOrders = 1;
+			} case 1: {
+				this.premiumOrderQueue = 2;
+				this.maxNewOrders = 2;
+				this.orderDelay = 6000;
+				break;
+			} case 2: {
+				this.premiumOrderQueue = 2;
+				this.offOrderQueue = 1;
+				this.maxActiveOrders = 3;
+				this.flySpawnChance = 0.5;
+				this.maxFlies = 2;
+				this.flySpawnDelay = 10000;
+				this.orderExpiryAccel = 5;
+				break;
+			} case 3: {
+				this.premiumOrderQueue = 2;
+				this.offOrderQueue = 1;
+				this.premiumOrderChance = 0.25;
+				this.orderDelay = 5000;
+				this.maxNewOrders = 3;
+				this.flySpawnChance = 0.75;
+				this.flySpawnDelay = 7500;
+				break;
+			} case 4: {
+				this.premiumOrderQueue = 2;
+				this.offOrderQueue = 2;
+				this.offOrderChance = 0.25;
+				this.maxFlies = 3;
+				this.maxActiveOrders = 4;
+				break;
+			} case 5 : {
+				this.premiumOrderQueue = 2;
+				this.offOrderQueue = 2;
+				this.maxNewOrders = 4;
+				this.orderDelay = 4000;
+				this.flySpawnChance = 1;
+				this.flySpawnDelay = 6000;
+				this.maxFlies = 4;
+				break;
+			} case 6: {
+				this.premiumOrderQueue = 2;
+				this.offOrderQueue = 2;
+				this.premiumOrderChance = 0.35;
+				this.orderExpiryAccel = 10;
+				break;
+			} case 7: {
+				this.premiumOrderQueue = 2;
+				this.offOrderQueue = 2;
+				this.offOrderChance = 0.35;
+				this.orderDelay = 3000;
+				this.flySpawnChance = 1;
+				this.flySpawnDelay = 5000;
+				break;
+			} case 8: {
+				this.premiumOrderQueue = 2;
+				this.offOrderQueue = 2;
+				this.maxActiveOrders = 5;
+				this.maxFlies = 5;
+				break;
+			} case 9: {
+				this.premiumOrderQueue = 3;
+				this.offOrderQueue = 2;
+				this.orderExpiryAccel = 15;
+				this.premiumOrderChance = 0.5;
+				this.offOrderChance = 0.5;
+			} default: {
+				break;
+			}
+		}
+	}
+
+	rampDifficultyEndless(){
 		switch(this.difficulty){
 			case 1: {
 				this.maxActiveOrders = 2;
@@ -505,40 +702,48 @@ export class GameScene extends BaseScene {
 				this.maxNewOrders = 2;
 				break;
 			} case 3: {
+				this.offOrderQueue = 1;
 				this.flySpawnChance = 0.5;
 				break;
 			} case 4: {
+				this.offOrderQueue = 1;
 				this.offOrderChance = 0.2;
 				this.maxFlies = 2;
 				this.orderExpiryAccel = 5;
 				this.flySpawnDelay -= 1000;
 				break;
 			} case 5 : {
+				this.offOrderQueue = 1;
 				this.maxActiveOrders = 4;
 				this.maxNewOrders = 3;
 				break;
 			} case 6: {
+				this.offOrderQueue = 2;
 				this.orderDelay = 6250;
 				this.flySpawnDelay -= 1000;
 				this.flySpawnChance = 0.6;
 				this.offOrderChance = 0.3;
 				break;
 			} case 7: {
+				this.offOrderQueue = 2;
 				this.maxActiveOrders = 5;
 				this.maxNewOrders = 4;
 				this.maxFlies = 3;
 				break;
 			} case 8: {
+				this.offOrderQueue = 3;
 				this.offOrderChance = 0.4;
 				this.orderDelay = 5000;
 				this.flySpawnDelay -= 1000;
 				break;
 			} case 9: {
+				this.offOrderQueue = 3;
 				this.offOrderChance = 0.5;
 				this.maxFlies = 4;
 				this.maxNewOrders = 5;
 				this.orderExpiryAccel = 5;
 			} default: {
+				this.offOrderQueue = 5;
 				this.orderDelay = Math.max(1000, this.orderDelay - 500);
 				this.offOrderChance = Math.min(0.95, this.offOrderChance + 0.05);
 				this.maxFlies = Math.min(20, this.maxFlies + 1);

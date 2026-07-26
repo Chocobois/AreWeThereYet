@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { Timer, TimerType } from "@/components/timers/Timer";
 import { BaseScene } from "@/scenes/BaseScene";
+import { Music } from "@/components/Music";
 
 export class StoryScene extends BaseScene {
 	private background: Phaser.GameObjects.Image;
@@ -13,6 +14,7 @@ export class StoryScene extends BaseScene {
     private phase: number = 0;
     private textMode: number = -1;
 
+    public music: Phaser.Sound.WebAudioSound;
 
 	constructor() {
 		super({ key: "StoryScene" });
@@ -26,6 +28,10 @@ export class StoryScene extends BaseScene {
 		this.background.setOrigin(0);
         this.background.setDepth(1);
         this.fitToScreen(this.background);
+
+        this.music = new Music(this, "m_kitchentimer_side", { volume: 0.25 });
+        this.music.on("bar", this.onBar.bind(this));
+        this.music.play();
 
         this.dialogue = this.addText({
 			x: 80,
@@ -146,7 +152,7 @@ export class StoryScene extends BaseScene {
             } case 5: {
                 this.dialogue2.setVisible(false);
                 this.addEvent(500, () => {
-                    this.fade(true, this.defaultTimer, 0x000000);
+                    this.fade(true, 1000, 0x000000);
                     this.addEvent(1050, () => {
                         this.scene.start("GameScene");
                     });
@@ -194,6 +200,13 @@ export class StoryScene extends BaseScene {
 
         const squish = 1.0 + 0.04 * Math.sin((6 * time) / 1000);
 		this.indicator.setScale(1.0, squish);
+	}
+
+    onBar(bar: number) {
+		if (this.phase == 5 && bar%4 == 0) {
+            this.music.stop();
+			this.sound.play("m_kitchentimer_side_end", {volume: this.music.volume});
+		}
 	}
 
 	/* Orders */
