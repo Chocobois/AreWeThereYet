@@ -108,7 +108,9 @@ export class Order extends Button {
 		event: Phaser.Types.Input.EventData,
 	): void {
 		super.onDown(pointer, localX, localY, event);
-
+		if(this.scene.inTutorial || this.scene.pendingBeat){
+			return;
+		}
 		// Accept order
 		if (!this.accepted && !this.completed) {
 			this.accepted = true;
