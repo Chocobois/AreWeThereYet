@@ -92,6 +92,8 @@ const audios: Audio[] = [
 	sound("expire.mp3", "expire", 0.5),
 	sound("tooltip.mp3", "tooltip", 0.5),
 	sound("eggtick.mp3", "eggtick", 0.5),
+	sound("rattle.mp3", "rattle", 0.5),
+	sound("gsm.mp3", "gsm", 0.5),
 	sound("neworder.mp3", "neworder", 0.5),
 	sound("scroll.mp3", "scroll", 0.5),
 	sound("boom.mp3", "boom", 0.5),

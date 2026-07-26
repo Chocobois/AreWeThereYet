@@ -8,19 +8,19 @@ export default class PlayerButton extends Button {
   private text: Phaser.GameObjects.Text;
   private spriteOutline: OutlineFilter;
 
-  constructor(scene: BaseScene, x: number, y: number) {
+  constructor(scene: BaseScene, x: number, y: number, text: string, scaleX: number = 1.4) {
     super(scene, x, y);
 
     this.sprite = this.scene.add.sprite(x, y, 'pill');
     this.sprite.enableFilters();
     this.sprite.setOrigin(0.5, 1);
 
-    this.text = scene.addText({ x, y: y-90, size: 64, text: "Start", color: "black" })
+    this.text = scene.addText({ x, y: y-90, size: 64, text, color: "black" })
         .setOrigin(0.5,1);
 
     this.spriteOutline = new OutlineFilter(this.sprite.filterCamera, 8, 0x000000);
     this.sprite.filters!.internal.add(this.spriteOutline);
-    this.sprite.scaleX = 1.4
+    this.sprite.scaleX = scaleX
 
     this.bindInteractive(this.sprite);
 
