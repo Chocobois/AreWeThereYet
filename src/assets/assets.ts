@@ -11,6 +11,12 @@ const images: Image[] = [
 	image("backgrounds/shopkeep_smirk.png", "shopkeep_smirk"),
 	image("backgrounds/shopkeep_speech.png", "shopkeep_speech"),
 	image("backgrounds/timerbox.png", "timerbox"),
+
+	image("backgrounds/kprebkg.png", "kprebkg"),
+	image("backgrounds/kbkg.png", "kbkg"),
+	image("backgrounds/kbkg_exp.png", "kbkg_exp"),
+	image("backgrounds/kbun.png", "kbun"),
+	image("backgrounds/kchar.png", "kchar"),
 	// Titlescreen
 	image("titlescreen/sky.png", "title_sky"),
 	image("titlescreen/background.png", "title_background"),
