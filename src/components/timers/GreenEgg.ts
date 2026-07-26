@@ -15,7 +15,7 @@ export class GreenEgg extends Timer {
 		Math.floor(rs) != Math.floor(ps);
 
 		if (cantick) {
-			this.scene.sound.play("eggtick", {volume: 2*this.scene.SFXvolume});
+			this.scene.sound.play("eggtick", {volume: 3*this.scene.SFXvolume});
 		}
 
 	}

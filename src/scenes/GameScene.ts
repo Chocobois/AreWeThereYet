@@ -54,6 +54,11 @@ export class GameScene extends BaseScene {
 	public orderExpiryAccel: number = 0;
 	public difficulty: number;
 
+	private queueUpdate: boolean;
+	private pauseOrders: boolean;
+
+	private orderTimer: number[]; 
+	private flyTimer: number[]; 
 
 	// Locations to place the order bubbles
 	private slots: { order: Order | null; x: number; y: number }[] = [
@@ -71,8 +76,8 @@ export class GameScene extends BaseScene {
 
 	create(): void {
 		this.fade(false, 200, 0x000000);
-		this.SFXvolume = 0.25;
-
+		this.SFXvolume = 0.5;
+		this.setBasicVariables();
 		this.cameras.main.setBackgroundColor(0xffffff);
 
 		this.musicKitchentimer = new Music(this, "m_kitchentimer", { volume: 0.4 });
@@ -112,9 +117,11 @@ export class GameScene extends BaseScene {
 		this.scoreText.setOrigin(0.5, 0);
 
 		// Endlessly looping gameplay
-		this.initDifficulty();
 
-		this.time.addEvent({
+
+
+		/*
+		const orderSpawner = this.time.addEvent({
 			delay: this.orderDelay,
 			loop: true,
 			callback: () => {
@@ -128,8 +135,11 @@ export class GameScene extends BaseScene {
 			callbackScope: this,
 		});
 
+		*/
 		
-		this.time.addEvent({
+
+		/*
+		const flySpawner = this.time.addEvent({
 			delay: this.flySpawnDelay,
 			loop: true,
 			startAt: -30000,
@@ -141,7 +151,16 @@ export class GameScene extends BaseScene {
 			},
 			callbackScope: this,
 		});
+		*/
 		
+	}
+
+	setBasicVariables(){
+		this.initDifficulty();
+		this.queueUpdate = false;
+		this.orderTimer = [this.orderDelay, this.orderDelay];
+		this.flyTimer = [this.flySpawnDelay+30000,this.flySpawnDelay];
+		this.pauseOrders = false;
 	}
 
 	initDifficulty(){
@@ -165,11 +184,12 @@ export class GameScene extends BaseScene {
 			timer.setDepth(10 + timer.y / 1000);
 		});
 
-
 		this.orders.forEach((order) => {
 			order.update(time, delta);
 			order.setDepth(20);
 		});
+
+		this.updateOrderSpawn(time, delta);
 
 		for(let fl = (this.flies.length-1); fl >= 0; fl--){
 			this.flies[fl].update(time, delta);
@@ -179,6 +199,8 @@ export class GameScene extends BaseScene {
 				this.flies.splice(fl,1);
 			}
 		}
+
+		this.updateFlySpawn(time, delta);
 
 		this.scoreText.setText(`Score: ${this.totalScore}`);
 
@@ -234,6 +256,32 @@ export class GameScene extends BaseScene {
 			this.totalScore += score;
 			this.scoreText.setText(`Score: ${this.totalScore}`);
 		});
+	}
+
+	updateOrderSpawn(t: number, d: number){
+		this.orderTimer[0] -= d;
+		if(this.orderTimer[0] <= 0){
+			this.orderTimer[1] = this.orderDelay;
+			this.orderTimer[0] += this.orderDelay;
+		}
+		if(!this.pauseOrders){
+			const pendingOrders = this.orders.filter((order) => !order.accepted);
+			const activeOrders = this.orders.filter ((order) => !order.completed);
+			if ((pendingOrders.length < this.maxNewOrders) && (activeOrders.length < this.maxActiveOrders)) {
+				this.newOrder();
+			}
+		}
+	}
+
+	updateFlySpawn(t: number, d: number){
+		this.flyTimer[0] -= d;
+		if(this.flyTimer[0] <= 0){
+			this.flyTimer[1] = this.flySpawnDelay;
+			this.flyTimer[0] += this.flySpawnDelay;
+		}
+		if ((this.flies.length < this.maxFlies) && (Math.random() < this.flySpawnChance)) {
+			this.spawnFly();
+		}
 	}
 
 	addScore(n: number){
