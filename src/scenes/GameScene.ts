@@ -196,7 +196,7 @@ export class GameScene extends BaseScene {
 
 	spawnFly(){
 		let ry = 360+Math.round(Math.random()*(1080-400));
-		let rx = 64+Math.round(Math.random()*(1920-128));
+		let rx = 430+Math.round(Math.random()*(1060));
 		let sx = -120+Math.round(Math.random()*2160);
 		//let sx = 100+Math.round(Math.random()*1720);
 		this.flies.push(new Fly(this,sx,-100,rx,ry));
