@@ -8,6 +8,9 @@ import { BlueCone } from "@/components/timers/BlueCone";
 import { Golen } from "@/components/timers/Golen";
 import { Fly } from "@/components/Fly";
 import { Music } from "@/components/Music";
+import { formatTime } from "@/util/format";
+import { GetStage, Stage } from "@/components/Stages";
+import StartButton from "@/components/buttons/StartButton";
 
 const orderItems = [
 	// Temporary: Duplicate entries to increase their odds of appearing
@@ -31,6 +34,7 @@ const orderItems = [
 export class GameScene extends BaseScene {
 	private background: Phaser.GameObjects.Image;
 
+	public musicKitchentimerIntro: Phaser.Sound.WebAudioSound;
 	public musicKitchentimer: Phaser.Sound.WebAudioSound;
 
 	private timers: Timer[];
@@ -39,8 +43,12 @@ export class GameScene extends BaseScene {
 
 	private totalScore: number;
 	private scoreText: Phaser.GameObjects.Text;
+	private timeText: Phaser.GameObjects.Text;
+	private textGetReady: Phaser.GameObjects.Text;
 
 	private stageTimer: number;
+
+	private currentStage: Stage;
 
 	public flySpawnChance: number;
 	public maxFlies: number;
@@ -60,6 +68,10 @@ export class GameScene extends BaseScene {
 	private orderTimer: number[]; 
 	private flyTimer: number[]; 
 
+	private startButton: StartButton;
+
+	private gameStarted = false;
+
 	// Locations to place the order bubbles
 	private slots: { order: Order | null; x: number; y: number }[] = [
 		{ order: null, x: 175, y: 200 },
@@ -72,16 +84,23 @@ export class GameScene extends BaseScene {
 
 	constructor() {
 		super({ key: "GameScene" });
+		this.gameStarted = false;
 	}
 
+	
+
 	create(): void {
+		this.currentStage = structuredClone(GetStage(0));
+
 		this.fade(false, 200, 0x000000);
 		this.SFXvolume = 0.5;
 		this.setBasicVariables();
 		this.cameras.main.setBackgroundColor(0xffffff);
 
+		this.musicKitchentimerIntro = new Music(this, "m_kitchentimer_intro", { volume: 0.4 });
+		this.musicKitchentimerIntro.play();
+
 		this.musicKitchentimer = new Music(this, "m_kitchentimer", { volume: 0.4 });
-		this.musicKitchentimer.play();
 
 		this.background = this.add.image(0, 0, "background");
 		this.background.setOrigin(0);
@@ -95,10 +114,17 @@ export class GameScene extends BaseScene {
 		//this.timers.push(new BlueCone(this, 1400, 800));
 		//this.timers.push(new Hourglass(this, 800, 500));
 
-		this.musicKitchentimer.on('bar', () => {
-			this.timers.forEach((timer) => timer.decrementTime());
-			this.orders.forEach((order) => order.decrementTime())
-		});
+		this.musicKitchentimerIntro.on('bar',  this.onBarIntro.bind(this));
+		this.musicKitchentimer.on('bar', this.onBar.bind(this));
+
+		this.timeText = this.addText({ x: this.CX, y: this.H - 100, size: 64, text: formatTime(this.currentStage.stageTime) })
+							.setStroke("black", 16)
+							.setOrigin(0.5,0);
+
+		this.textGetReady = this.addText({ x: this.CX, y: this.CY, size: 64, text: "Get ready . . ." })
+								.setStroke("black", 16)
+								.setOrigin(0.5,0)
+								.setVisible(false);
 
 		this.orders = [];
 		this.newOrder();
@@ -115,6 +141,14 @@ export class GameScene extends BaseScene {
 		});
 		this.scoreText.setStroke("black", 16);
 		this.scoreText.setOrigin(0.5, 0);
+
+		this.startButton = new StartButton(this, this.CX, this.CY);
+		this.startButton.on("click", () => {
+			this.startButton.setVisible(false);
+			this.gameStarted = true;
+			this.textGetReady.setVisible(true);
+		});
+		this.startButton.setScale(4, 1)
 
 		// Endlessly looping gameplay
 
@@ -153,6 +187,59 @@ export class GameScene extends BaseScene {
 		});
 		*/
 		
+	}
+
+	onBarIntro(bar: number) {
+		if(this.gameStarted) {
+			const offset = (bar*0.5) % 4;
+			if( bar <= 4 ) {
+				this.musicKitchentimerIntro.stop();
+				this.musicKitchentimer.play({
+					seek: 12 + offset
+				});
+			}
+			if( bar >= 4 && bar < 8 ) {
+				this.musicKitchentimerIntro.stop();
+				this.musicKitchentimer.play({
+					seek: 8 + offset
+				});
+			}
+			if(bar >= 8 && bar < 10) {
+				this.musicKitchentimerIntro.stop();
+				this.musicKitchentimer.play({
+					seek: 12 + offset
+				});
+			}
+		}
+	}
+	
+	onBar(bar: number) {
+		if(bar >= 32) {
+			this.timers.forEach((timer) => timer.decrementTime());
+			this.orders.forEach((order) => order.decrementTime());
+	
+			if(--this.currentStage.stageTime > 0) {
+				this.timeText.setText(formatTime(this.currentStage.stageTime));
+			}
+			this.textGetReady.setVisible(false);
+		} else {
+			if(bar == 28) {
+				this.textGetReady.setText("3")
+				this.sound.play('v_three');
+			}
+			if(bar == 29) {
+				this.textGetReady.setText("2")
+				this.sound.play('v_two');
+			}
+			if(bar == 30) {
+				this.textGetReady.setText("1")
+				this.sound.play('v_one');
+			}
+			if(bar == 31) {
+				this.textGetReady.setText("Go!")
+				this.sound.play('v_go');
+			}
+		}
 	}
 
 	setBasicVariables(){
