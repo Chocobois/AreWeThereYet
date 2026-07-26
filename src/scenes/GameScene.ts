@@ -240,6 +240,7 @@ export class GameScene extends BaseScene {
 
 
 	lose(){
+		this.gameStarted = false;
 		this.addEvent(1000, () => {
 			this.fade(true, 1000, 0x000000);
 			this.addEvent(1050, () => {
