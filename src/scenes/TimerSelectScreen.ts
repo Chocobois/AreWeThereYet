@@ -30,6 +30,7 @@ export class TimerSelectScene extends BaseScene {
 	}
 
 	create(): void {
+        this.eligibleTimers = [];
 		this.fade(false, 200, 0x000000);
         this.timerList = GetTimerMasterList();
         this.ownedTimers = GetTimerList();
