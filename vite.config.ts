@@ -38,7 +38,7 @@ export default defineConfig(({mode}) => {
   const basePath = isProdOrPreview ? `/${repo_name}/` : '/';
 
   return {
-    base: basePath,
+    base: "./",
     root: "src",
     plugins: [
       hmrScenes(),
