@@ -224,10 +224,11 @@ export class GameScene extends BaseScene {
 			this.textGetReady.setVisible(false);
 		} else {
 			if(bar == 28) {
+				this.textGetReady.setFontSize(128);
 				this.textGetReady.setText("3");
 				this.tweens.add({
 					targets: this.textGetReady,
-					scale: { from: 1.5, to: 1.0 },
+					scale: { from: 2, to: 1 },
 					ease: "Cubic.Out",
 					duration: 200,
 				});
@@ -237,7 +238,7 @@ export class GameScene extends BaseScene {
 				this.textGetReady.setText("2");
 				this.tweens.add({
 					targets: this.textGetReady,
-					rotation: { from: 0, to: Math.PI*2 },
+					rotation: { from: -Math.PI*2, to: 0 },
 					ease: "Cubic.Out",
 					duration: 200,
 				});
