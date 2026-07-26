@@ -16,6 +16,10 @@ const stages = [
 
 let currentStage = 0;
 
+export function GetStage(_: number) {
+    return stages[0]
+}
+
 export function GetCurrentStage() {
     return currentStage;
 }

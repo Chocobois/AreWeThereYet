@@ -6,15 +6,21 @@ import { title, version } from "@/version.json";
 
 const creditsLeft = `${title} 
 
-@Handle
-@Handle
-@Handle`;
+@Golen
+@Lumie
+@Mato
+@Clover
+@ArcticFqx
+`;
 
 const creditsRight = `
 
-role
-role
-role`;
+Code
+Code and art
+Music
+Music
+Code and voice
+`;
 
 export class TitleScene extends BaseScene {
 	public sky: Phaser.GameObjects.Image;
@@ -67,27 +73,27 @@ export class TitleScene extends BaseScene {
 		//this.character.y += 1000;
 
 		this.title = this.addText({
-			x: 0.25 * this.W,
-			y: 0.7 * this.H,
+			x: 80,
+			y: 0.87 * this.H,
 			size: 160,
-			color: "#000",
-			text: "Game Title",
+			color: "#FFF",
+			text: title,
 		});
-		this.title.setOrigin(0.5);
-		this.title.setStroke("#FFF", 8);
+		this.title.setOrigin(0, 0.5);
+		this.title.setStroke("#000", 8);
 		this.title.setPadding(2);
 		this.title.setVisible(false);
 		this.title.setAlpha(0);
 
 		this.subtitle = this.addText({
-			x: 0.25 * this.W,
-			y: 0.87 * this.H,
+			x: 900,
+			y: 0.75 * this.H,
 			size: 120,
-			color: "#000",
+			color: "#FFF",
 			text: "Tap to start",
 		});
-		this.subtitle.setOrigin(0.5);
-		this.subtitle.setStroke("#FFF", 3);
+		this.subtitle.setOrigin(0.5, 0.5);
+		this.subtitle.setStroke("#000", 3);
 		this.subtitle.setPadding(2);
 		this.subtitle.setVisible(false);
 		this.subtitle.setAlpha(0);
@@ -96,24 +102,24 @@ export class TitleScene extends BaseScene {
 			x: this.CX,
 			y: this.CY,
 			size: 140,
-			color: "#000",
+			color: "#FFF",
 			text: "Tap to focus",
 		});
 		this.tap.setOrigin(0.5);
 		this.tap.setAlpha(-1);
-		this.tap.setStroke("#FFF", 4);
+		this.tap.setStroke("#000", 4);
 		this.tap.setPadding(2);
 
 		this.version = this.addText({
 			x: this.W,
-			y: this.H,
+			y: 0,
 			size: 40,
-			color: "#000",
+			color: "#FFF",
 			text: version,
 		});
-		this.version.setOrigin(1, 1);
+		this.version.setOrigin(1, 0);
 		this.version.setAlpha(-1);
-		this.version.setStroke("#FFF", 4);
+		this.version.setStroke("#000", 4);
 		this.version.setPadding(2);
 
 		this.credits = this.add.container(0, 0);
@@ -121,7 +127,7 @@ export class TitleScene extends BaseScene {
 		this.credits.setAlpha(0);
 
 		let credits1 = this.addText({
-			x: 0.65 * this.W,
+			x: 0.01 * this.W,
 			y: 0,
 			size: 40,
 			color: "#c2185b",
@@ -133,7 +139,7 @@ export class TitleScene extends BaseScene {
 		this.credits.add(credits1);
 
 		let credits2 = this.addText({
-			x: 0.85 * this.W,
+			x: 0.15 * this.W,
 			y: 0,
 			size: 40,
 			color: "#c2185b",
