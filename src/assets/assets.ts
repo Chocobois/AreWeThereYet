@@ -66,7 +66,10 @@ const images: Image[] = [
 ];
 
 /* Spritesheets */
-const spritesheets: SpriteSheet[] = [];
+const spritesheets: SpriteSheet[] = [
+	spritesheet("music.png", "music", 300, 300),
+	spritesheet("audio.png", "audio", 300, 300),
+];
 
 /* Audios */
 const audios: Audio[] = [

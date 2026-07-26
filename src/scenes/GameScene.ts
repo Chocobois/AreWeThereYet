@@ -12,6 +12,7 @@ import { formatTime } from "@/util/format";
 import { GetCurrentStage, GetStage, GetTimerList, SetNextStage, Stage } from "@/components/Stages";
 import StartButton from "@/components/buttons/StartButton";
 import { SpeechBubble } from "@/components/SpeechBubble";
+import { MiniButton } from "@/components/MiniButton";
 
 const orderItems = [
 	// Temporary: Duplicate entries to increase their odds of appearing
@@ -87,6 +88,8 @@ export class GameScene extends BaseScene {
 	private myTimers: string[];
 
 	private startButton: StartButton;
+	public musicButton: MiniButton;
+	public audioButton: MiniButton;
 
 	private gameStarted = false;
 
@@ -191,6 +194,21 @@ export class GameScene extends BaseScene {
 		this.speechBubbleLayer.setDepth(50);
 		this.speechBubbles = [];
 
+		// From DiceEmUp
+		const bsize = 70;
+
+		this.musicButton = new MiniButton(this, this.W-2.5*bsize, 0.8*bsize, "music");
+		this.musicButton.on("click", (active: boolean) => {
+			this.musicButton.toggle();
+			this.musicKitchentimer.volume      = (this.musicButton.active ? 0.4 : 0);
+			this.musicKitchentimerIntro.volume = (this.musicButton.active ? 0.4 : 0);
+		}, this);
+
+		this.audioButton = new MiniButton(this, this.W-bsize, 0.8*bsize, "audio");
+		this.audioButton.on("click", (active: boolean) => {
+			this.audioButton.toggle();
+			this.sound.mute = !this.audioButton.active;
+		}, this);
 
 		this.input.keyboard
         ?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
