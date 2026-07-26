@@ -57,6 +57,8 @@ export class Timer extends Button {
 		this.text.setOrigin(0.5);
 		this.text.setStroke("black", 16);
 		this.add(this.text);
+		let scale = (1.1 * this.y) / this.scene.H;
+		this.scaleCont.setScale(scale, scale);
 	}
 
 	update(time: number, delta: number) {

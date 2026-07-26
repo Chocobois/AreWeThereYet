@@ -58,7 +58,7 @@ export class GameScene extends BaseScene {
 	private scoreText: Phaser.GameObjects.Text;
 	private textGetReady: Phaser.GameObjects.Text;
 
-	private stageTimer: number;
+	private stageTimer: number[];
 
 	private currentStage: Stage;
 
@@ -387,7 +387,7 @@ export class GameScene extends BaseScene {
 
 	setBasicVariables(){
 		this.pending = false;
-		this.stageTimer = 60000;
+		this.stageTimer = [30000,30000];
 		this.pendingBeat = true;
 		this.doTutorial = true;
 		this.tPhase = 0;
@@ -474,11 +474,11 @@ export class GameScene extends BaseScene {
 			if (!this.pendingBeat){
 				this.updateFlySpawn(time, delta);
 				this.updateOrderSpawn(time, delta);
-				this.stageTimer -= delta;
-				if(this.stageTimer <= 0){
+				this.stageTimer[0] -= delta;
+				if(this.stageTimer[0] <= 0){
 					console.log("Increased difficulty");
 					this.increaseDifficulty();
-					this.stageTimer = 60000;
+					this.stageTimer[0] = this.stageTimer[1];
 				}
 			}
 			this.scoreText.setText(`Score: ${this.totalScore}`);
@@ -509,6 +509,8 @@ export class GameScene extends BaseScene {
 	/* Orders */
 
 	newOrder() {
+
+		console.log("Making new order for level: " + this.myLv);
 		Phaser.Math.RND.shuffle(this.slots);
 		const slot = this.slots.find((slot) => !slot.order);
 		if (!slot) return;

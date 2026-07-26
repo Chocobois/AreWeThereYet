@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { Timer, TimerType } from "@/components/timers/Timer";
 import { BaseScene } from "@/scenes/BaseScene";
-import { AddTimer, GetTimerList, GetTimerMasterList } from "@/components/Stages";
+import { AddTimer, GetCurrentStage, GetTimerList, GetTimerMasterList } from "@/components/Stages";
 import { TimerSelectButton } from "@/components/TimerSelectButton";
 
 export class TimerSelectScene extends BaseScene {
@@ -24,6 +24,8 @@ export class TimerSelectScene extends BaseScene {
 
     private displayedTimers: TimerSelectButton[];
 
+    private myLv: number;
+
 
 	constructor() {
 		super({ key: "TimerSelectScene" });
@@ -32,9 +34,13 @@ export class TimerSelectScene extends BaseScene {
 	create(): void {
         this.eligibleTimers = [];
 		this.fade(false, 200, 0x000000);
+        this.myLv = GetCurrentStage();
         this.timerList = GetTimerMasterList();
         this.ownedTimers = GetTimerList();
         this.filterTimers();
+
+        this.phaseTimer = 1000;
+        this.phase = 0;
 
         this.eTimer = -1000;
         this.ended = false;
@@ -148,6 +154,25 @@ export class TimerSelectScene extends BaseScene {
         if(this.phaseTimer <= 0){
             this.phaseTimer = 1000;
         }
+        switch(this.myLv){
+            case 1: {
+                this.parseDialogueInit();
+                break;
+            } case 2: {
+                this.parseDialogueRepeat();
+                break;
+            } case -1: {
+                this.parseDialogueEndless();
+                break;
+            } default: {
+                this.parseDialogueNone();
+                break;
+            }
+        }
+    }
+
+
+    parseDialogueInit(){
         switch(this.phase){
             case 0: {
                 this.shopkeep.setTexture("shopkeep_talk");
@@ -189,6 +214,135 @@ export class TimerSelectScene extends BaseScene {
                 this.phase++;
                 break;
             } case 6: {
+                //this.phase++;
+                break;
+            } default: {
+                break;
+            }
+        }
+    }
+
+    parseDialogueRepeat(){
+        switch(this.phase){
+            case 0: {
+                this.shopkeep.setTexture("shopkeep_talk");
+                this.speech.setVisible(true);
+                this.dialogue.setText("Oh you're back again!");
+                this.dialogue.setVisible(true);
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 1: {
+                this.shopkeep.setTexture("shopkeep_smirk");
+                this.dialogue.setText("How's that dead-end job been treating ya?");
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 2: {
+                this.shopkeep.setTexture("shopkeep_talk");
+                this.dialogue.setText("But really, remember to take care of yourself!");
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 3: {
+                this.shopkeep.setTexture("shopkeep_talk");
+                this.dialogue.setText("Maybe another timer would make it all easier?");
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 4: {
+                this.createTimers();
+                this.shopkeep.setTexture("shopkeep");
+                this.speech.setVisible(false);
+                this.dialogue.setText("");
+                this.dialogue.setVisible(false);
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 5: {
+                //this.phase++;
+                break;
+            } default: {
+                break;
+            }
+        }
+    }
+
+    parseDialogueEndless(){
+        switch(this.phase){
+            case 0: {
+                this.shopkeep.setTexture("shopkeep_smirk");
+                this.speech.setVisible(true);
+                this.dialogue.setText("Going back again?");
+                this.dialogue.setVisible(true);
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 1: {
+                this.dialogue.setText("You really can't help yourself, can you?");
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 2: {
+                this.shopkeep.setTexture("shopkeep_smirk");
+                this.dialogue.setText("Might be Stockholm Syndrome at this point...");
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 3: {
+                this.shopkeep.setTexture("shopkeep_talk");
+                this.dialogue.setText("Hey though, do what you love!");
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 4: {
+                this.dialogue.setText("I should have just about one more here...");
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 5: {
+                this.createTimers();
+                this.shopkeep.setTexture("shopkeep");
+                this.speech.setVisible(false);
+                this.dialogue.setText("");
+                this.dialogue.setVisible(false);
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 6: {
+                //this.phase++;
+                break;
+            } default: {
+                break;
+            }
+        }
+    }
+
+    parseDialogueNone(){
+        switch(this.phase){
+            case 0: {
+                this.shopkeep.setTexture("shopkeep_talk");
+                this.speech.setVisible(true);
+                this.dialogue.setText("Huh, guess I don't have any more.");
+                this.dialogue.setVisible(true);
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 1: {
+                this.dialogue.setText("I'll send you on your way then. Good luck!");
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 2: {
+                this.createTimers();
+                this.shopkeep.setTexture("shopkeep");
+                this.speech.setVisible(false);
+                this.dialogue.setText("");
+                this.dialogue.setVisible(false);
+                this.sound.play("scroll", {volume: 0.5});
+                this.phase++;
+                break;
+            } case 3: {
                 //this.phase++;
                 break;
             } default: {
