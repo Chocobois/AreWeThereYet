@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { Timer, TimerType } from "@/components/timers/Timer";
 import { BaseScene } from "@/scenes/BaseScene";
+import { GetTimerList, GetTimerMasterList } from "@/components/Stages";
 
 export class TimerSelectScene extends BaseScene {
 	private background: Phaser.GameObjects.Image;
@@ -13,6 +14,10 @@ export class TimerSelectScene extends BaseScene {
     private phaseTimer: number = 1000;
     private phase: number = 0;
 
+    private eligibleTimers: string[];
+    private timerList: string[];
+    private ownedTimers: string[];
+
 
 	constructor() {
 		super({ key: "TimerSelectScene" });
@@ -20,6 +25,9 @@ export class TimerSelectScene extends BaseScene {
 
 	create(): void {
 		this.fade(false, 200, 0x000000);
+        this.timerList = GetTimerMasterList();
+        this.ownedTimers = GetTimerList();
+        this.filterTimers();
 		this.cameras.main.setBackgroundColor(0xffffff);
 
 		this.background = this.add.image(0, 0, "transitionbkg");
@@ -69,6 +77,20 @@ export class TimerSelectScene extends BaseScene {
         );
 
 	}
+
+    filterTimers(){
+        this.timerList.forEach((tl) => {
+            if(!this.ownedTimers.includes(tl)){
+                this.eligibleTimers.push(tl);
+            }
+        });
+    }
+
+    createTimers(){
+
+    }
+
+    
 
     forward(){
         if(this.phaseTimer > 0){

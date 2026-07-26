@@ -1,11 +1,31 @@
 export type Stage = {
+    id: number
     stageTime: number,
     events: Array<Object>
 }
 
 const stages = [
     {
-        stageTime: 120,
+        id: 0,
+        stageTime: 600,
+        events: [
+            {
+
+            }
+        ]
+    },
+    {
+        id: 1,
+        stageTime: 840,
+        events: [
+            {
+
+            }
+        ]
+    },
+    {
+        id: 2,
+        stageTime: 1200,
         events: [
             {
 
@@ -14,10 +34,21 @@ const stages = [
     }
 ] satisfies Array<Stage>;
 
-let currentStage = 0;
+const timerList = ["golen", "bluecone", "hourglass"];
 
-export function GetStage(_: number) {
-    return stages[0]
+let currentStage = 0;
+let currentTimers: string[] = [];
+
+export function GetTimerMasterList(){
+    return timerList;
+}
+
+export function GetTimerList(){
+    return currentTimers;
+}
+
+export function GetStage() {
+    return stages[currentStage];
 }
 
 export function GetCurrentStage() {
@@ -26,4 +57,12 @@ export function GetCurrentStage() {
 
 export function SetNextStage(next: number) {
     currentStage = next;
+}
+
+export function SetEndless() {
+    currentStage = -1;
+}
+
+export function AddTimer(s: string) {
+    currentTimers.push(s);
 }

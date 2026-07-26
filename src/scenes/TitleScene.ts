@@ -31,6 +31,7 @@ export class TitleScene extends BaseScene {
 	public subtitle: Phaser.GameObjects.Text;
 	public tap: Phaser.GameObjects.Text;
 	public version: Phaser.GameObjects.Text;
+	private sTimer: number;
 
 	public musicTitle: Phaser.Sound.WebAudioSound;
 	public select: Phaser.Sound.WebAudioSound;
@@ -47,6 +48,7 @@ export class TitleScene extends BaseScene {
 	create(): void {
 		this.fade(false, 200, 0x000000);
 		this.hasFlash = false;
+		this.sTimer = 1000000;
 		this.sky = this.add.image(this.CX, this.CY, "kprebkg");
 		this.containToScreen(this.sky);
 		this.background = this.add.image(
@@ -185,9 +187,15 @@ export class TitleScene extends BaseScene {
 			this.background.alpha += 0.03 * (1 - this.background.alpha);
 			this.overlay.scaleY = 1+(0.05*(1+Math.sin((3 * time) / 1000)));
 			
+			if(this.sTimer > 0){
+				this.sTimer -= delta;
+			}
+
 			if(!this.hasFlash && (Math.abs(this.CY-this.foreground.y) < 10) ){
 				this.hasFlash = true;
 				this.flash(3000, 0xffffff, 1);
+				this.sTimer = 1000;
+				this.sound.play("boom", {volume: 0.25});
 				this.background.setTexture("kbkg_exp");
 				this.overlay.setVisible(true);
 			}
@@ -225,6 +233,8 @@ export class TitleScene extends BaseScene {
 			this.title.setAlpha(1);
 			this.subtitle.setVisible(true);
 			this.subtitle.setAlpha(1);
+		} else if(this.sTimer > 0){
+			return;
 		} else if (!this.isStarting) {
 			this.sound.play("ding", { volume: 0.18 });
 			// this.sound.play("m_slice", { volume: 0.3 });
