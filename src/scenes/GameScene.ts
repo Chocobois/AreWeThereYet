@@ -138,6 +138,7 @@ export class GameScene extends BaseScene {
 		this.textGetReady = this.addText({ x: this.CX, y: this.CY, size: 64, text: "Get ready . . ." })
 								.setStroke("black", 16)
 								.setOrigin(0.5,0.5)
+								.setDepth(30)
 								.setVisible(false);
 
 		this.orders = [];
