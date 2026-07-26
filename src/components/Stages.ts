@@ -14,6 +14,12 @@ const stages = [
     }
 ] satisfies Array<Stage>;
 
-export function GetStage(stageNumber: number) {
-    return stages[stageNumber];
+let currentStage = 0;
+
+export function GetCurrentStage() {
+    return currentStage;
+}
+
+export function SetNextStage(next: number) {
+    currentStage = next;
 }
