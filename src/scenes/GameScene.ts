@@ -187,6 +187,7 @@ export class GameScene extends BaseScene {
 
 		this.startButton = new StartButton(this, this.CX, this.CY, "Start!");
 		this.startButton.setVisible(false);
+		this.startButton.setDepth(50);
 		this.startButton.on("click", () => {
 			this.startButton.setVisible(false);
 			this.gameStarted = true;
@@ -206,14 +207,14 @@ export class GameScene extends BaseScene {
 		// From DiceEmUp
 		const bsize = 70;
 
-		this.musicButton = new MiniButton(this, this.W-2.5*bsize, 0.8*bsize, "music");
+		this.musicButton = new MiniButton(this, this.W/2-bsize*.8, 2*bsize, "music");
 		this.musicButton.on("click", (active: boolean) => {
 			this.musicButton.toggle();
 			this.musicKitchentimer.volume      = (this.musicButton.active ? 0.4 : 0);
 			this.musicKitchentimerIntro.volume = (this.musicButton.active ? 0.4 : 0);
 		}, this);
 
-		this.audioButton = new MiniButton(this, this.W-bsize, 0.8*bsize, "audio");
+		this.audioButton = new MiniButton(this, this.W/2+bsize*.8, 2*bsize, "audio");
 		this.audioButton.on("click", (active: boolean) => {
 			this.audioButton.toggle();
 			this.sound.mute = !this.audioButton.active;
