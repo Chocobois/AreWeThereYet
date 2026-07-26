@@ -21,7 +21,7 @@ export class TitleScene extends BaseScene {
 	public background: Phaser.GameObjects.Image;
 	public foreground: Phaser.GameObjects.Image;
 	public character: Phaser.GameObjects.Image;
-
+	public overlay: Phaser.GameObjects.Image;
 	public credits: Phaser.GameObjects.Container;
 	public title: Phaser.GameObjects.Text;
 	public subtitle: Phaser.GameObjects.Text;
@@ -34,31 +34,37 @@ export class TitleScene extends BaseScene {
 
 	public isStarting: boolean;
 
+	public hasFlash: boolean;
+
 	constructor() {
 		super({ key: "TitleScene" });
 	}
 
 	create(): void {
 		this.fade(false, 200, 0x000000);
-
-		this.sky = this.add.image(this.CX, this.CY, "title_sky");
+		this.hasFlash = false;
+		this.sky = this.add.image(this.CX, this.CY, "kprebkg");
 		this.containToScreen(this.sky);
 		this.background = this.add.image(
 			this.CX,
 			0.9 * this.CY,
-			"title_background"
+			"kbkg"
 		);
 		this.containToScreen(this.background);
-		this.foreground = this.add.image(this.CX, this.CY, "title_foreground");
+		this.foreground = this.add.image(this.CX, this.CY, "kbun");
 		this.containToScreen(this.foreground);
-		this.character = this.add.image(this.CX, this.CY, "title_character");
-		this.containToScreen(this.character);
+		//this.character = this.add.image(this.CX, this.CY, "kbun");
+		//this.containToScreen(this.character);
+
+		this.overlay = this.add.image(this.CX, this.CY, "kchar");
+		this.containToScreen(this.overlay);
+		this.overlay.setVisible(false);
 
 		this.background.setVisible(false);
 		this.background.setAlpha(0);
 		this.background.y += 4000;
 		this.foreground.y += 1000;
-		this.character.y += 1000;
+		//this.character.y += 1000;
 
 		this.title = this.addText({
 			x: 0.25 * this.W,
@@ -170,11 +176,17 @@ export class TitleScene extends BaseScene {
 		if (this.background.visible) {
 			this.background.y += 0.02 * (this.CY - this.background.y);
 			this.foreground.y += 0.025 * (this.CY - this.foreground.y);
-			this.character.y += 0.02 * (this.CY - this.character.y);
+			//this.character.y += 0.02 * (this.CY - this.character.y);
 
 			this.background.alpha += 0.03 * (1 - this.background.alpha);
-			this.character.scaleX = Math.sin((3 * time) / 1000);
-
+			this.overlay.scaleY = 1+(0.05*(1+Math.sin((3 * time) / 1000)));
+			
+			if(!this.hasFlash && (Math.abs(this.CY-this.foreground.y) < 10) ){
+				this.hasFlash = true;
+				this.flash(3000, 0xffffff, 1);
+				this.background.setTexture("kbkg_exp");
+				this.overlay.setVisible(true);
+			}
 			this.title.alpha +=
 				0.02 * ((this.title.visible ? 1 : 0) - this.title.alpha);
 			this.subtitle.alpha +=
