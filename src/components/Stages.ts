@@ -56,7 +56,13 @@ export function GetCurrentStage() {
 }
 
 export function SetNextStage(next: number) {
+    if(currentStage == -1){
+        return;
+    }
     currentStage = next;
+    if(currentStage > 2){
+        currentStage = -1;
+    }
 }
 
 export function SetEndless() {
