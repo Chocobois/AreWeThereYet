@@ -133,6 +133,7 @@ export class Order extends Button {
 		if (!this.accepted && !this.completed) {
 			if (this.remainingSeconds < 0) {
 				this.completed = true;
+				this.scene.sound.play("expire", {volume: 3*this.scene.SFXvolume});
 				this.failOrder("ok nvm");
 			} else if (this.remainingSeconds <= 5) {
 				this.flashWarning();
@@ -142,7 +143,8 @@ export class Order extends Button {
 				if (this.accepted && !this.completed) {
 			if (this.remainingSeconds < -30) {
 				this.completed = true;
-				this.failOrder("burned");
+				this.scene.sound.play("terrible", {volume: 0.5*this.scene.SFXvolume});
+				this.failOrder("Burned...");
 			} else if (this.remainingSeconds <= -25 ) {
 				this.flashWarning();
 			}
@@ -176,7 +178,7 @@ export class Order extends Button {
 		} else {
 			this.pill.setTint(Color.Red700);
 			this.scene.sound.play("terrible", {volume: 0.5*this.scene.SFXvolume});
-			this.text.setText("Terrible");
+			this.text.setText("Raw...");
 			this.emit("score", Math.trunc(-50*this.scene.multiplier));
 		}
 
@@ -192,7 +194,6 @@ export class Order extends Button {
 		this.text.setText(text);
 
 		this.scene.addEvent(2000, this.moveOffscreen, this);
-		this.scene.sound.play("expire", {volume: 1*this.scene.SFXvolume});
 		this.emit("score", Math.trunc(-100*this.scene.multiplier));
 	}
 
