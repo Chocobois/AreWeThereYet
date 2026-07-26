@@ -157,4 +157,11 @@ export class Timer extends Button {
 		this.bounceTimer();
 		this.bounceTimerText();
 	}
+
+	getSoundPosition() {
+		return {
+			volume: Phaser.Math.Clamp((this.y / this.scene.H * 1.2), 0.6, 1),
+			pan: Phaser.Math.Interpolation.Linear([-1, 1], this.x / this.scene.W),
+		};
+	}
 }

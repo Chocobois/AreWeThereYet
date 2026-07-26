@@ -33,4 +33,12 @@ export async function Game() {
   game.events.on('focus', () => {
     game.sound.setVolume(1.0);
   });
+
+  game.events.on("hidden", () => {
+    game.sound.pauseAll();
+  })
+
+  game.events.on("visible", () => {
+    game.sound.resumeAll();
+  })
 }

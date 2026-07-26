@@ -44,6 +44,7 @@ export class GameScene extends BaseScene {
 	private tPhase: number = 0;
 	private tTimer: number[] = [-1000, -1000];
 	private inTutorial: boolean = false;
+	private previousBarIntro: number = -1;
 
 	private timers: Timer[];
 	private orders: Order[];
@@ -215,9 +216,29 @@ export class GameScene extends BaseScene {
 		
 	}
 
+	checkDesync(prevBar: number, currBar: number) {
+		if ((prevBar < currBar) && (currBar - prevBar > 1)) {
+			console.log(`Possible intro music desync detected: bar ${prevBar} -> ${currBar}`)
+			return true
+		}
+		return false
+	}
+
 	onBarIntro(bar: number) {
+		// Check for skipped bars (excluding loop poitns)
+		this.checkDesync(this.previousBarIntro, bar)
+
 		if(this.gameStarted) {
 			const offset = (bar*0.5) % 4;
+
+			if (bar%16 <= 12) {
+				this.musicKitchentimerIntro.stop();
+				this.musicKitchentimer.play({
+					seek: 12 + offset
+				});
+			}
+
+			/*
 			if( bar <= 4 ) {
 				this.musicKitchentimerIntro.stop();
 				this.musicKitchentimer.play({
@@ -236,7 +257,10 @@ export class GameScene extends BaseScene {
 					seek: 12 + offset
 				});
 			}
+			 */
 		}
+
+		this.previousBarIntro = bar;
 	}
 	
 	onBar(bar: number) {
@@ -348,6 +372,8 @@ export class GameScene extends BaseScene {
 
 		this.updateFlySpawn(time, delta);
 
+		// this.scoreText.setText(`Score: ${this.totalScore}`);
+
 		this.stageTimer -= delta;
 		if(this.stageTimer <= 0){
 			this.increaseDifficulty();
@@ -401,8 +427,7 @@ export class GameScene extends BaseScene {
 
 		// On completing or failing an order
 		order.on("score", (score: number) => {
-			this.totalScore += score;
-			this.scoreText.setText(`Score: ${this.totalScore}`);
+			this.addScore(score);
 		});
 	}
 
@@ -433,7 +458,16 @@ export class GameScene extends BaseScene {
 	}
 
 	addScore(n: number){
+		const prevScore = this.totalScore;
 		this.totalScore += n;
+		this.tweens.addCounter({
+			duration: 600,
+			ease: Phaser.Math.Easing.Expo.Out,
+			onUpdate: (tween) => {
+				const animatedScore = Phaser.Math.Interpolation.Linear([prevScore, this.totalScore], tween.getValue()!)
+				this.scoreText.setText(`Score: ${Phaser.Math.RoundTo(animatedScore, 0)}`);
+			}
+		})
 	}
 
 	killFlies(){
