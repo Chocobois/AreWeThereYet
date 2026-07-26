@@ -11,6 +11,7 @@ import { Music } from "@/components/Music";
 import { formatTime } from "@/util/format";
 import { GetStage, Stage } from "@/components/Stages";
 import StartButton from "@/components/buttons/StartButton";
+import { SpeechBubble } from "@/components/SpeechBubble";
 
 const orderItems = [
 	// Temporary: Duplicate entries to increase their odds of appearing
@@ -36,7 +37,15 @@ export class GameScene extends BaseScene {
 
 	public musicKitchentimerIntro: Phaser.Sound.WebAudioSound;
 	public musicKitchentimer: Phaser.Sound.WebAudioSound;
+
+	private speechBubbleLayer: Phaser.GameObjects.Container;
+	private speechBubbles: SpeechBubble[];
+	private doTutorial: boolean = true;
+	private tPhase: number = 0;
+	private tTimer: number[] = [-1000, -1000];
+	private inTutorial: boolean = false;
 	private previousBarIntro: number = -1;
+	private tAdvance: boolean = false;
 
 	private timers: Timer[];
 	private orders: Order[];
@@ -144,6 +153,7 @@ export class GameScene extends BaseScene {
 		this.scoreText.setOrigin(0.5, 0);
 
 		this.startButton = new StartButton(this, this.CX, this.CY);
+		this.startButton.setVisible(false);
 		this.startButton.on("click", () => {
 			this.startButton.setVisible(false);
 			this.gameStarted = true;
@@ -151,6 +161,23 @@ export class GameScene extends BaseScene {
 		});
 		this.startButton.setScale(4, 1)
 
+		this.speechBubbleLayer = new Phaser.GameObjects.Container(this,0,0);
+		this.add.existing(this.speechBubbleLayer);
+		this.speechBubbleLayer.setDepth(50);
+		this.speechBubbles = [];
+
+
+		this.input.keyboard
+        ?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+        .on("down", this.click, this);
+        this.input.on(
+            "pointerdown",
+            (pointer: PointerEvent) => {
+                if (pointer.button == 0) {
+                    this.click();
+                }
+            },
+        );
 		// Endlessly looping gameplay
 
 
@@ -314,9 +341,15 @@ export class GameScene extends BaseScene {
 		this.orderDelay = 7500;
 		this.offOrderChance = 0;
 		this.orderExpiryAccel = 0;
+
+		this.doTutorial = true;
+		this.inTutorial = true;
 	}
 
 	update(time: number, delta: number) {
+		if(this.inTutorial){
+			this.updateTutorial(time,delta);
+		}
 		this.timers.forEach((timer) => {
 			timer.update(time, delta);
 			timer.setDepth(10 + timer.y / 1000);
@@ -340,13 +373,17 @@ export class GameScene extends BaseScene {
 
 		this.updateFlySpawn(time, delta);
 
-		this.scoreText.setText(`Score: ${this.totalScore}`);
+		// this.scoreText.setText(`Score: ${this.totalScore}`);
 
 		this.stageTimer -= delta;
 		if(this.stageTimer <= 0){
 			this.increaseDifficulty();
 			this.stageTimer = 60000;
 		}
+
+		this.scoreText.setText(`Score: ${this.totalScore}`);
+
+
 
 		/*
 		if((this.stageTimer <= 0) && this.orders.length < 1){ //Go to next stage if the stage timer has run out and all your orders have finished
@@ -391,8 +428,7 @@ export class GameScene extends BaseScene {
 
 		// On completing or failing an order
 		order.on("score", (score: number) => {
-			this.totalScore += score;
-			this.scoreText.setText(`Score: ${this.totalScore}`);
+			this.addScore(score);
 		});
 	}
 
@@ -423,7 +459,16 @@ export class GameScene extends BaseScene {
 	}
 
 	addScore(n: number){
+		const prevScore = this.totalScore;
 		this.totalScore += n;
+		this.tweens.addCounter({
+			duration: 600,
+			ease: Phaser.Math.Easing.Expo.Out,
+			onUpdate: (tween) => {
+				const animatedScore = Phaser.Math.Interpolation.Linear([prevScore, this.totalScore], tween.getValue()!)
+				this.scoreText.setText(`Score: ${Phaser.Math.RoundTo(animatedScore, 0)}`);
+			}
+		})
 	}
 
 	killFlies(){
@@ -496,6 +541,229 @@ export class GameScene extends BaseScene {
 			}
 		}
 	}
+
+	click(){
+		if(this.inTutorial){
+			this.advanceSpeech()
+		}
+	}
+
+	advanceSpeech(){
+		if(this.speechBubbles.length < 1){
+			return;
+		}
+		let sbb = this.speechBubbles.filter((stb) => stb.popped);
+		sbb.forEach((sr) => sr.setAlpha(0.75));
+		for(let nn = 0; nn < this.speechBubbles.length; nn++){
+			if(!this.speechBubbles[nn].popped){
+				if(this.speechBubbles[nn].nt < 0){
+					this.speechBubbles[nn].setVisible(true);
+					this.speechBubbles[nn].nt = 1000;
+					this.sound.play("scroll", {volume: 0.5});
+					return;
+				} else {
+					return;
+				}
+			}
+		}
+		if(!this.tAdvance){
+			this.fadeBubbles(450);
+			this.tAdvance = true;
+		}
+	}
+
+	updateTutorial(t: number, d: number){
+		if(!this.inTutorial){
+			return;
+		}
+		switch(this.tPhase){
+			case 0: {
+				this.speechBubbles.push(new SpeechBubble(this, 40, 0, "sb_kobold", "Well... what am I even looking at?"));
+				this.speechBubbles.push(new SpeechBubble(this, 240, 360, "sb_jbun", "Attention, minion!"));
+				this.speechBubbles.push(new SpeechBubble(this, 40, 720, "sb_jbun", "We're getting plenty of orders and I expect excellence from you."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 1: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 2: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 0, "sb_jbun", "Click on an order to start timing it for the chef."));
+				this.speechBubbles.push(new SpeechBubble(this, 1280, 360, "sb_jbun", "Make sure to get it right or the food will be terrible!"));
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 720, "sb_kobold", "Uhhh..."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000];
+				this.tPhase++;
+				break;
+			} case 3: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 4: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 40, 0, "sb_jbun", "To help you keep track, you can use that egg timer."));
+				this.speechBubbles.push(new SpeechBubble(this, 240, 360, "sb_jbun", "Just smack it to add 10 seconds."));
+				this.speechBubbles.push(new SpeechBubble(this, 40, 720, "sb_jbun", "Even a dolt like you can figure that out."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 5: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 6: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 0, "sb_kobold", "Well, seems easy enough. But what if I put the wrong time?"));
+				this.speechBubbles.push(new SpeechBubble(this, 1280, 360, "sb_jbun", "Wait for it to run out. Or right click it to reduce the time."));
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 720, "sb_jbun", "Anyway, you're ready to start."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 7: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 8: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 40, 0, "sb_kobold", "Wait, you said it's busy, what if there's a bunch of orders?"));
+				this.speechBubbles.push(new SpeechBubble(this, 240, 360, "sb_jbun", "Well, what do you think your brain is for idiot?"));
+				this.speechBubbles.push(new SpeechBubble(this, 40, 720, "sb_jbun", "Juggling is the EXCITING part. How else would you feel alive?"));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 9: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 10: {
+				this.destroyBubbles();
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 0, "sb_jbun", "Anyway, the customers are coming! Better get started!"));
+				this.speechBubbles.push(new SpeechBubble(this, 1280, 360, "sb_jbun", "By the way, if the food is terrible, I WILL be adding grilled kobold to the menu."));
+				this.speechBubbles.push(new SpeechBubble(this, 1080, 720, "sb_kobold", "Oh my god..."));
+				this.adjustBubbles();
+				this.tTimer = [-1000,-1000]
+				this.tPhase++;
+				break;
+			} case 11: {
+				this.speechBubbles.forEach((sbb) => sbb.update(t,d));
+				if(this.tAdvance){
+					if(this.tTimer[0] < 0){
+						this.tTimer = [500,500];
+					}
+				}
+				if(this.tTimer[0] > 0){
+					this.tTimer[0] -= d;
+					if(this.tTimer[0] <= 0){
+						this.tTimer = [-1000,-1000];
+						this.tAdvance = false;
+						this.tPhase++;
+					}
+				}
+				break;
+			} case 12: {
+				this.destroyBubbles();
+				this.tPhase++;
+			} default: {
+				this.inTutorial = false;
+				this.startButton.setVisible(true);
+			}
+		}
+		
+	}
+
+	fadeBubbles(t: number): boolean{
+		let sr = this.speechBubbles.filter((st) => !st.popped);
+		if(sr.length < 1){
+			this.speechBubbles.forEach((sn) => {
+				sn.fade(t);
+			});
+			return true;
+		}
+		return false;
+	}
+
+	adjustBubbles(){
+		this.speechBubbles.forEach((s) => {
+			s.setVisible(false);
+			this.speechBubbleLayer.add(s);
+		});
+		this.speechBubbles[0].setVisible(true);
+		this.speechBubbles[0].nt = 1000;
+	}
+
+	destroyBubbles(){
+		this.speechBubbles.forEach((st) => {
+			st.destroy();
+		});
+		this.speechBubbles = [];
+	}
+	
 
 	completeOrder(order: Order) {
 		const slot = this.slots.find((s) => s.order === order);
