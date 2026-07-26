@@ -51,6 +51,11 @@ const Data = {
 		loop: true,
 		start: 2.125 + overlap/2,
 		end:  18.125 + overlap/2,
+	},
+	m_kitchentimer_title: {
+		offset: 0.27,
+		bpm: 183,
+		loop: false
 	}
 };
 

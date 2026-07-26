@@ -151,10 +151,11 @@ export class StoryScene extends BaseScene {
                 break;
             } case 5: {
                 this.dialogue2.setVisible(false);
-                this.addEvent(500, () => {
+                this.addEvent(800, () => {
                     this.fade(true, 1000, 0x000000);
                     this.addEvent(1050, () => {
                         this.scene.start("GameScene");
+                        this.music.stop(); // Just to be safe
                     });
                 });
                 this.sound.play("scroll", {volume: 0.5});
