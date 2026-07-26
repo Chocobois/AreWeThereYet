@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { BaseScene } from "@/scenes/BaseScene";
 import { Button } from "../Button";
+import { formatTime } from "@/util/format";
 
 export const TimerType = {
 	GreenEgg: {
@@ -96,7 +97,7 @@ export class Timer extends Button {
 		this.remainingSeconds += pointer.button != 0 ? -10 : 10;
 		this.remainingSeconds = Math.max(0, Math.ceil(this.remainingSeconds));
 
-		this.text.setText(this.formatTime());
+		this.text.setText(formatTime(this.remainingSeconds));
 		this.bounceTimerText();
 	}
 
@@ -118,7 +119,7 @@ export class Timer extends Button {
 	}
 
 	decrementTime() {
-		this.text.setText(this.formatTime());
+		this.text.setText(formatTime(this.remainingSeconds));
 		// Time switches to a new second
 		this.bounceTimerText(1.1);
 
@@ -127,8 +128,8 @@ export class Timer extends Button {
 			this.remainingSeconds--;
 			this.scene.tweens.add({
 					targets: this,
-					scaleY: 0.9,
-					scaleX: 1.1,
+					scaleY: { from: 1, to: 0.9 },
+					scaleX: { from: 1, to: 1.1 },
 					duration: 50,
 					ease: 'Cubic.Out',
 					yoyo: true,
@@ -155,12 +156,5 @@ export class Timer extends Button {
 
 		this.bounceTimer();
 		this.bounceTimerText();
-	}
-
-	formatTime(): string {
-		const minutes = Math.floor(Math.ceil(this.remainingSeconds) / 60);
-		const seconds = Math.ceil(this.remainingSeconds) % 60;
-
-		return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 	}
 }
