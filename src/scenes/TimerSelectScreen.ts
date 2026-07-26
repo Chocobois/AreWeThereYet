@@ -1,7 +1,8 @@
 import Phaser from "phaser";
 import { Timer, TimerType } from "@/components/timers/Timer";
 import { BaseScene } from "@/scenes/BaseScene";
-import { GetTimerList, GetTimerMasterList } from "@/components/Stages";
+import { AddTimer, GetTimerList, GetTimerMasterList } from "@/components/Stages";
+import { TimerSelectButton } from "@/components/TimerSelectButton";
 
 export class TimerSelectScene extends BaseScene {
 	private background: Phaser.GameObjects.Image;
@@ -18,6 +19,11 @@ export class TimerSelectScene extends BaseScene {
     private timerList: string[];
     private ownedTimers: string[];
 
+    private eTimer: number;
+    private ended: boolean;
+
+    private displayedTimers: TimerSelectButton[];
+
 
 	constructor() {
 		super({ key: "TimerSelectScene" });
@@ -28,6 +34,11 @@ export class TimerSelectScene extends BaseScene {
         this.timerList = GetTimerMasterList();
         this.ownedTimers = GetTimerList();
         this.filterTimers();
+
+        this.eTimer = -1000;
+        this.ended = false;
+        this.displayedTimers = [];
+
 		this.cameras.main.setBackgroundColor(0xffffff);
 
 		this.background = this.add.image(0, 0, "transitionbkg");
@@ -64,6 +75,8 @@ export class TimerSelectScene extends BaseScene {
         this.dialogue.setVisible(false);
 
 
+
+
         this.input.keyboard
         ?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         .on("down", this.forward, this);
@@ -79,6 +92,7 @@ export class TimerSelectScene extends BaseScene {
 	}
 
     filterTimers(){
+        this.eligibleTimers = [];
         this.timerList.forEach((tl) => {
             if(!this.ownedTimers.includes(tl)){
                 this.eligibleTimers.push(tl);
@@ -86,11 +100,45 @@ export class TimerSelectScene extends BaseScene {
         });
     }
 
-    createTimers(){
-
+    buyTimer(st: string){
+        this.sound.play("buy", {volume: 0.5});
+        AddTimer(st);
+        this.eTimer = 500;
+        this.displayedTimers.forEach((dt) => {
+            if(!dt.bought){
+                dt.passivate();
+            }
+        })
     }
 
-    
+    createTimers(){
+        console.log("TIMER LIST: " + this.eligibleTimers);
+        switch(this.eligibleTimers.length){
+            case 1: {
+                this.displayedTimers.push(new TimerSelectButton(this,960,540,this.eligibleTimers[0]));
+                break;
+            } case 2: {
+                this.displayedTimers.push(new TimerSelectButton(this,960-180,540,this.eligibleTimers[0]));
+                this.displayedTimers.push(new TimerSelectButton(this,960+180,540,this.eligibleTimers[1]));
+                console.log("CREATED 2 TIMERS " + this.displayedTimers);
+                break;
+            } case 3: {
+                this.displayedTimers.push(new TimerSelectButton(this,960-360,540,this.eligibleTimers[0]));
+                this.displayedTimers.push(new TimerSelectButton(this,960,540,this.eligibleTimers[1]));
+                this.displayedTimers.push(new TimerSelectButton(this,960+360,540,this.eligibleTimers[2]));
+                break;
+            } case 0: {
+                this.progress();
+                break;
+            } default: {
+                break;
+            }
+        }
+
+        this.displayedTimers.forEach((dt) => {
+            dt.setDepth(20);
+        })
+    }
 
     forward(){
         if(this.phaseTimer > 0){
@@ -131,6 +179,7 @@ export class TimerSelectScene extends BaseScene {
                 this.phase++;
                 break;
             } case 5: {
+                this.createTimers();
                 this.shopkeep.setTexture("shopkeep");
                 this.speech.setVisible(false);
                 this.dialogue.setText("");
@@ -139,13 +188,7 @@ export class TimerSelectScene extends BaseScene {
                 this.phase++;
                 break;
             } case 6: {
-                this.addEvent(500, () => {
-                    this.fade(true, 1000, 0x000000);
-                    this.addEvent(1050, () => {
-                        this.scene.start("GameScene");
-                    });
-                });
-                this.phase++;
+                //this.phase++;
                 break;
             } default: {
                 break;
@@ -153,9 +196,37 @@ export class TimerSelectScene extends BaseScene {
         }
     }
 
+    progress(){
+        this.addEvent(500, () => {
+            this.fade(true, 1000, 0x000000);
+            this.addEvent(1050, () => {
+                this.scene.start("GameScene");
+            });
+        });
+    }
+
 	update(time: number, delta: number) {
+        if(this.ended){
+            return;
+        }
         if(this.phaseTimer > 0){
             this.phaseTimer -= delta;
+        }
+        if(this.eTimer > 0){
+            this.eTimer -= delta;
+            this.displayedTimers.forEach((tt) => {
+                if(tt.bought){
+                    if(this.eTimer > 250){
+                        tt.offset(20*Math.sin((this.eTimer-250)/250));
+                    }
+                } else {
+                    tt.setAlpha(Math.max(0,this.eTimer/500));
+                }
+            });
+            if((this.eTimer <= 0)){
+                this.ended = true;
+                this.progress();
+            }
         }
 	}
 

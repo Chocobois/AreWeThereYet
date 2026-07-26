@@ -9,7 +9,7 @@ import { Golen } from "@/components/timers/Golen";
 import { Fly } from "@/components/Fly";
 import { Music } from "@/components/Music";
 import { formatTime } from "@/util/format";
-import { GetCurrentStage, GetStage, Stage } from "@/components/Stages";
+import { GetCurrentStage, GetStage, GetTimerList, SetNextStage, Stage } from "@/components/Stages";
 import StartButton from "@/components/buttons/StartButton";
 import { SpeechBubble } from "@/components/SpeechBubble";
 
@@ -84,6 +84,8 @@ export class GameScene extends BaseScene {
 	private orderTimer: number[]; 
 	private flyTimer: number[]; 
 
+	private myTimers: string[];
+
 	private startButton: StartButton;
 
 	private gameStarted = false;
@@ -107,6 +109,8 @@ export class GameScene extends BaseScene {
 		this.currentStage = structuredClone(GetStage());
 		this.myLv = GetCurrentStage();
 
+		this.myTimers = GetTimerList();
+
 		this.fade(false, 200, 0x000000);
 		this.SFXvolume = 0.5;
 		this.setBasicVariables();
@@ -123,6 +127,23 @@ export class GameScene extends BaseScene {
 
 		this.timers = [];
 		this.timers.push(new GreenEgg(this, 600, 800));
+
+		this.myTimers.forEach((rt) => {
+			switch(rt){
+				case "golen": {
+					this.timers.push(new Golen(this, 1000, 700));
+					break;
+				} case "bluecone": {
+					this.timers.push(new BlueCone(this, 1400, 800));
+					break;
+				} case "hourglass": {
+					this.timers.push(new Hourglass(this, 800, 500));
+					break;
+				} default: {
+					break;
+				}
+			}
+		});
 		//this.timers.push(new Golen(this, 1000, 700));
 		//this.timers.push(new BlueCone(this, 1400, 800));
 		//this.timers.push(new Hourglass(this, 800, 500));
@@ -196,13 +217,25 @@ export class GameScene extends BaseScene {
 	onEndStage() {
 		this.gameStarted = false;
 		console.log("Stage over");
-		this.addEvent(1000, () => {
-			this.fade(true, 1000, 0x000000);
-			this.addEvent(1050, () => {
-				this.musicKitchentimer.stop();
-				this.scene.start("TimerSelectScene");
+		SetNextStage(this.myLv+1);
+		if(this.myLv == -1){
+			this.addEvent(1000, () => {
+				this.fade(true, 1000, 0x000000);
+				this.addEvent(1050, () => {
+					this.musicKitchentimer.stop();
+					this.scene.start("TitleScene");
+				});
 			});
-		});
+		} else {
+			this.addEvent(1000, () => {
+				this.fade(true, 1000, 0x000000);
+				this.addEvent(1050, () => {
+					this.musicKitchentimer.stop();
+					this.scene.start("TimerSelectScene");
+				});
+			});
+		}
+
 	}
 
 	onBarIntro(bar: number) {

@@ -87,6 +87,7 @@ const audios: Audio[] = [
 	sound("neworder.mp3", "neworder", 0.5),
 	sound("scroll.mp3", "scroll", 0.5),
 	sound("boom.mp3", "boom", 0.5),
+	sound("buy.mp3", "buy", 0.5),
 		sound("ding.mp3", "ding", 0.5),
 
 	sound("vo/three.mp3", "v_three", 1),
