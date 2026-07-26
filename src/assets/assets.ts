@@ -12,16 +12,20 @@ const images: Image[] = [
 	image("backgrounds/shopkeep_speech.png", "shopkeep_speech"),
 	image("backgrounds/timerbox.png", "timerbox"),
 
-	image("backgrounds/kprebkg.png", "kprebkg"),
-	image("backgrounds/kbkg.png", "kbkg"),
-	image("backgrounds/kbkg_exp.png", "kbkg_exp"),
-	image("backgrounds/kbun.png", "kbun"),
-	image("backgrounds/kchar.png", "kchar"),
+
+	image("backgrounds/st1.png", "st1"),
+	image("backgrounds/st2.png", "st2"),
+
 	// Titlescreen
 	image("titlescreen/sky.png", "title_sky"),
 	image("titlescreen/background.png", "title_background"),
 	image("titlescreen/foreground.png", "title_foreground"),
 	image("titlescreen/character.png", "title_character"),
+	image("backgrounds/kprebkg.png", "kprebkg"),
+	image("backgrounds/kbkg.png", "kbkg"),
+	image("backgrounds/kbkg_exp.png", "kbkg_exp"),
+	image("backgrounds/kbun.png", "kbun"),
+	image("backgrounds/kchar.png", "kchar"),
 
 
 	//Fly

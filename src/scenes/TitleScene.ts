@@ -233,7 +233,7 @@ export class TitleScene extends BaseScene {
 				this.fade(true, 1000, 0x000000);
 				this.addEvent(1050, () => {
 					this.musicTitle.stop();
-					this.scene.start("GameScene");
+					this.scene.start("StoryScene");
 				});
 			});
 		}
