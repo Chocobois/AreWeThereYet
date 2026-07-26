@@ -7,7 +7,7 @@ export type Stage = {
 const stages = [
     {
         id: 0,
-        stageTime: 600,
+        stageTime: 300,
         events: [
             {
 
@@ -16,7 +16,7 @@ const stages = [
     },
     {
         id: 1,
-        stageTime: 840,
+        stageTime: 420,
         events: [
             {
 
@@ -25,7 +25,7 @@ const stages = [
     },
     {
         id: 2,
-        stageTime: 1200,
+        stageTime: 600,
         events: [
             {
 
