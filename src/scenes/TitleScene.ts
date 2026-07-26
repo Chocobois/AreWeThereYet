@@ -4,22 +4,20 @@ import { Music } from "@/components/Music";
 
 import { title, version } from "@/version.json";
 
-const creditsLeft = `${title} 
-
-@Golen
-@Lumie
-@Mato
-@Clover
+const creditsLeft = `
+@NightLightLumie
+@Golenchu
 @ArcticFqx
+@MatoCookies
+Clover
 `;
 
 const creditsRight = `
-
-Code
 Code and art
-Music
-Music
+Code
 Code and voice
+Music and code
+Music
 `;
 
 export class TitleScene extends BaseScene {
@@ -69,7 +67,7 @@ export class TitleScene extends BaseScene {
 		this.background.setVisible(false);
 		this.background.setAlpha(0);
 		this.background.y += 4000;
-		this.foreground.y += 1000;
+		this.foreground.y += 1050;
 		//this.character.y += 1000;
 
 		this.title = this.addText({
@@ -86,14 +84,14 @@ export class TitleScene extends BaseScene {
 		this.title.setAlpha(0);
 
 		this.subtitle = this.addText({
-			x: 900,
-			y: 0.75 * this.H,
-			size: 120,
+			x: 0.135 * this.W,
+			y: 0.35 * this.H,
+			size: 75,
 			color: "#FFF",
 			text: "Tap to start",
 		});
 		this.subtitle.setOrigin(0.5, 0.5);
-		this.subtitle.setStroke("#000", 3);
+		this.subtitle.setStroke("#000", 6);
 		this.subtitle.setPadding(2);
 		this.subtitle.setVisible(false);
 		this.subtitle.setAlpha(0);
@@ -139,7 +137,7 @@ export class TitleScene extends BaseScene {
 		this.credits.add(credits1);
 
 		let credits2 = this.addText({
-			x: 0.15 * this.W,
+			x: 0.23 * this.W,
 			y: 0,
 			size: 40,
 			color: "#c2185b",
@@ -152,7 +150,7 @@ export class TitleScene extends BaseScene {
 
 		// Music
 		if (!this.musicTitle) {
-			this.musicTitle = new Music(this, "m_first", { volume: 0.4 });
+			this.musicTitle = new Music(this, "m_kitchentimer_title", { volume: 0.4 });
 			this.musicTitle.on("bar", this.onBar, this);
 			this.musicTitle.on("beat", this.onBeat, this);
 
@@ -228,7 +226,7 @@ export class TitleScene extends BaseScene {
 			this.subtitle.setVisible(true);
 			this.subtitle.setAlpha(1);
 		} else if (!this.isStarting) {
-			this.sound.play("t_rustle", { volume: 0.3 });
+			this.sound.play("ding", { volume: 0.18 });
 			// this.sound.play("m_slice", { volume: 0.3 });
 			// this.sound.play("u_attack_button", { volume: 0.5 });
 			// this.select2.play();

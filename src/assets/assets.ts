@@ -70,14 +70,12 @@ const spritesheets: SpriteSheet[] = [];
 
 /* Audios */
 const audios: Audio[] = [
-	music("title.mp3", "m_main_menu"),
-	music("first.mp3", "m_first"),
 	music("kitchentimer.mp3", "m_kitchentimer"),
+	music("kitchentimer_title.mp3", "m_kitchentimer_title"),
 	music("kitchentimer_intro.mp3", "m_kitchentimer_intro"),
 	music("kitchentimer_side.mp3", "m_kitchentimer_side"),
 	sound("kitchentimer_side_end.mp3", "m_kitchentimer_side_end"),
 
-	sound("tree/rustle.mp3", "t_rustle", 0.5),
 	sound("flyslap.mp3", "flyslap", 0.5),
 	sound("perfect.mp3", "perfect", 0.5),
 	sound("ok.mp3", "ok", 0.5),
@@ -88,6 +86,7 @@ const audios: Audio[] = [
 	sound("eggtick.mp3", "eggtick", 0.5),
 	sound("neworder.mp3", "neworder", 0.5),
 	sound("scroll.mp3", "scroll", 0.5),
+	sound("ding.mp3", "ding", 0.5),
 
 	sound("vo/three.mp3", "v_three", 1),
 	sound("vo/two.mp3", "v_two", 1),
