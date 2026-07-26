@@ -46,7 +46,7 @@ const endlessStage: Stage = {
 
 const timerList = ["golen", "bluecone", "hourglass"];
 
-let currentStage = 2;
+let currentStage = 0;
 let currentTimers: string[] = [];
 
 export function GetTimerMasterList(){

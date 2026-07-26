@@ -524,9 +524,11 @@ export class GameScene extends BaseScene {
 			}
 		}
 		
-		let pr = true;
+		let pr = false;
 		if((this.premiumOrderQueue > 0) || (Math.random() < this.premiumOrderChance)){
 			pr = true;
+			console.log("Remaining premium orders: " + this.premiumOrderQueue);
+			console.log("Chance for premium: " + this.premiumOrderChance);
 			if(this.premiumOrderQueue > 0){
 				this.premiumOrderQueue--;
 			}
