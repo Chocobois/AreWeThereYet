@@ -340,7 +340,7 @@ export class GameScene extends BaseScene {
 
 		this.updateFlySpawn(time, delta);
 
-		this.scoreText.setText(`Score: ${this.totalScore}`);
+		// this.scoreText.setText(`Score: ${this.totalScore}`);
 
 		this.stageTimer -= delta;
 		if(this.stageTimer <= 0){
@@ -391,8 +391,7 @@ export class GameScene extends BaseScene {
 
 		// On completing or failing an order
 		order.on("score", (score: number) => {
-			this.totalScore += score;
-			this.scoreText.setText(`Score: ${this.totalScore}`);
+			this.addScore(score);
 		});
 	}
 
@@ -423,7 +422,16 @@ export class GameScene extends BaseScene {
 	}
 
 	addScore(n: number){
+		const prevScore = this.totalScore;
 		this.totalScore += n;
+		this.tweens.addCounter({
+			duration: 600,
+			ease: Phaser.Math.Easing.Expo.Out,
+			onUpdate: (tween) => {
+				const animatedScore = Phaser.Math.Interpolation.Linear([prevScore, this.totalScore], tween.getValue()!)
+				this.scoreText.setText(`Score: ${Phaser.Math.RoundTo(animatedScore, 0)}`);
+			}
+		})
 	}
 
 	killFlies(){
