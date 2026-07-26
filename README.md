@@ -1,6 +1,6 @@
-# Chocobois Game Jam Template
+# Eggcelent Clockwork
 
-We make game, but faster
+GMTK 2026 Countdown
 
 ## Quick start
 ### Prerequisites
