@@ -9,7 +9,7 @@ import { Golen } from "@/components/timers/Golen";
 import { Fly } from "@/components/Fly";
 import { Music } from "@/components/Music";
 import { formatTime } from "@/util/format";
-import { GetCurrentStage, GetStage, GetTimerList, SetNextStage, Stage } from "@/components/Stages";
+import { GetCurrentStage, GetStage, GetTimerList, RestartStages, SetNextStage, Stage } from "@/components/Stages";
 import StartButton from "@/components/buttons/StartButton";
 import { SpeechBubble } from "@/components/SpeechBubble";
 import { MiniButton } from "@/components/MiniButton";
@@ -241,6 +241,7 @@ export class GameScene extends BaseScene {
 
 	lose(){
 		this.gameStarted = false;
+		RestartStages();
 		this.addEvent(1000, () => {
 			this.fade(true, 1000, 0x000000);
 			this.addEvent(1050, () => {

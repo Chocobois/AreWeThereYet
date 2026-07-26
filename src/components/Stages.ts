@@ -88,3 +88,8 @@ export function SetEndless() {
 export function AddTimer(s: string) {
     currentTimers.push(s);
 }
+
+export function RestartStages(){
+    currentTimers = [];
+    currentStage = 0;
+}
