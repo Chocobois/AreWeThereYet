@@ -236,6 +236,17 @@ export class GameScene extends BaseScene {
 		return false
 	}
 
+
+	lose(){
+		this.addEvent(1000, () => {
+			this.fade(true, 1000, 0x000000);
+			this.addEvent(1050, () => {
+				this.musicKitchentimer.stop();
+				this.scene.start("EndScene");
+			});
+		});
+	}
+
 	onEndStage() {
 		this.gameStarted = false;
 		console.log("Stage over");
@@ -464,9 +475,13 @@ export class GameScene extends BaseScene {
 					this.stageTimer = 60000;
 				}
 			}
-
+			this.scoreText.setText(`Score: ${this.totalScore}`);
+			if(this.totalScore < 0){
+				this.pending = true;
+				this.lose();
+			}
 		}
-		this.scoreText.setText(`Score: ${this.totalScore}`);
+
 
 
 

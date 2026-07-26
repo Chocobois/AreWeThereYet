@@ -4,6 +4,7 @@ import { TitleScene } from "@/scenes/TitleScene";
 import { TimerSelectScene } from "./scenes/TimerSelectScreen";
 import { GameScene } from "@/scenes/GameScene";
 import { StoryScene } from "./scenes/StoryScene";
+import { EndScene } from "./scenes/EndScene";
 
 export async function Game() {
   const config: Phaser.Types.Core.GameConfig = {
@@ -15,7 +16,7 @@ export async function Game() {
     scale: {
       mode: Phaser.Scale.FIT,
     },
-    scene: [PreloadScene, TitleScene, StoryScene, GameScene, TimerSelectScene],
+    scene: [PreloadScene, TitleScene, StoryScene, GameScene, TimerSelectScene, EndScene],
 
     plugins: {
       global: [],

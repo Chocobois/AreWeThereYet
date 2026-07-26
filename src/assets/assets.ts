@@ -25,6 +25,7 @@ const images: Image[] = [
 	image("backgrounds/kbkg_exp.png", "kbkg_exp"),
 	image("backgrounds/kbun.png", "kbun"),
 	image("backgrounds/kchar.png", "kchar"),
+	image("backgrounds/endscreen.png", "endscreen"),
 
 	//Fly
 	image("characters/flyf1.png", "flyf1"),
